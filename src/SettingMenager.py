@@ -73,7 +73,7 @@ class SettingsMenager:
         data = self.load_settings_from_file()
         return data['PlotSaver'][0]
 
-    def get_RobotsSimulation_settings(self) -> Dict:
+    def get_RobotsSimulation_settings(self) -> dict:
         data = self.load_settings_from_file()
         return data['RobotsSimulation'][0]
 

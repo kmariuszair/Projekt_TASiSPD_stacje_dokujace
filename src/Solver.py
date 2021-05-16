@@ -127,7 +127,7 @@ class Solver:
         :param iteration_lim: limit iteracji algorytmu
         :param telemetry_on: czy rejestrować telemetrię
         :param starting_solution: zadane rozwiązanie startowe, możemy wykorzystać ten parametr, gdy korzystamy z
-                                  innego niż standardowego generatora rozwiązania paczątkowego
+                                  innego niż standardowego generatora rozwiązania początkowego
         """
 
         # Atrybuty związane z parametrami problemu
@@ -218,7 +218,7 @@ class Solver:
         """
         Funkcja implementuje dostosowany przez nas algorytm Tabu Search.
 
-        :param record_and_plot_data: opcjonalny argument służący do wyboru, czy checmy wizualizować przebieg algorytmu
+        :param record_and_plot_data: opcjonalny argument służący do wyboru, czy chcemy wizualizować przebieg algorytmu
         :return self.__x_min: najlepsze znalezione rozwiązanie
         """
         # inicjalizacja zmiennych odpowiedzialnych za kryterium stopu
@@ -273,7 +273,7 @@ class Solver:
                                 self.__Q_min_new = Q_new
                                 self.__x_min_new = np.copy(x_new)
                         else:
-                            # jeśli jest w krótkoterminowej liście tabu to licz średnią kadencyjność elementu, któty
+                            # jeśli jest w krótkoterminowej liście tabu to licz średnią kadencyjność elementu, który
                             # zabrania ruch i licz ilość zabronień
                             av_cadence += cadence
                             elems_in_short_tabu += 1
@@ -281,7 +281,7 @@ class Solver:
                                 self.__Q_min_new_tabu = Q_new
                                 self.__x_min_new_tabu = np.copy(x_new)
                     else:
-                        # jeśli jest w dlugoterminowej liście tabu to licz średnią kadencyjność elementu, któty
+                        # jeśli jest w długoterminowej liście tabu to licz średnią kadencyjność elementu, który
                         # zabrania ruch i licz ilość zabronień
                         av_long_cadence += long_cadence
                         elems_in_long_tabu += 1
@@ -319,7 +319,7 @@ class Solver:
                         move = (self.__tabu_list > 0) * (self.__x_a > 0)
                         self.__delete_given_move_from_tabu(move)
                 else:
-                    # potrzebujemy miejsca, w które nie wolno było postawicz paczkomatu
+                    # potrzebujemy miejsca, w które nie wolno było postawić paczkomatu
                     move = (self.__tabu_list > 0) * (self.__x_a > 0)
                     self.__delete_given_move_from_tabu(move)
             if self.__Q_a < self.__Q_min:
@@ -343,7 +343,7 @@ class Solver:
             # Aktualizacja zmiennych odpowiadających za kryterium czasowe stopu
             self.__curr_time = time.time() - start_time
 
-            #Aktualizacja danych przekazywanych do DataCollectorPlotter
+            # Aktualizacja danych przekazywanych do DataCollectorPlotter
             self.__collect_and_represent_data.collect_data(self.__x_a, self.__Q_a, self.__tabu_list,
                                                            self.__long_term_tabu_list, elems_in_nei,
                                                            av_cadence, av_long_cadence,
@@ -471,7 +471,7 @@ class Solver:
         Edytuje naszą listę tabu (czyli tą macierz z jedynkami, gdzie oznaczają one miejsca, w których postawiono już
         paczkomaty we wcześniejszych iteracjach).
         Z racji przyjętej formy tej listy, zmniejszenie współczynnika kadencyjności do 0 jest równoznaczne
-        z wypadknięciem danego rozwiązania z listy tabu
+        z wypadnięciem danego rozwiązania z listy tabu
         """
         self.__tabu_list[self.__tabu_list > 0] -= 1
 
@@ -485,7 +485,7 @@ class Solver:
         """
         Usuwa dany ruch z listy tabu.
         Najlepiej, gdybyśmy pod pojęciem ruchu rozumieli macierz z jedną jedynką, która oznacza komórkę,
-        w której już był postawony paczkomat
+        w której już był postawiony paczkomat
 
         :param to_delete: współrzędne elementu dla macierzy listy tabu, który powinien zostać usunięty (wyzerowany)
         """
@@ -526,7 +526,7 @@ class Solver:
     def __aspiration_criteria(self) -> bool:
         """
         Zwraca wartość logiczną kryterium aspiracji
-        Funkconalność przeniesiona do osobnej metody,
+        Funkcjonalność przeniesiona do osobnej metody,
         aby móc ją w razie potrzeby rozbudowywać
         :return:
         """
@@ -553,7 +553,7 @@ class Solver:
             else:
                 return False
 
-        # W przypadku wykrycia błędu, zakończ działąnie algorytmu
+        # W przypadku wykrycia błędu, zakończ działanie algorytmu
         logging.info("Wystąpił błąd w badaniu kryterium stopu")
         return True
 

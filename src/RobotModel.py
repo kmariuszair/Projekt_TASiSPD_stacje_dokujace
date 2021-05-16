@@ -2,36 +2,17 @@
 Implementacja modelu robota. Służy do generowania mapy.
 """
 import numpy as np
+from typing import Tuple
 
 
-class Robot:
+class RobotSettings:
 
-    def __init__(self, settings: RobotSettings):
-        self.__settings = settings
-        self.__state = RobotState(self.__settings)
-
-    def make_move(self, direction: Tuple[int, int], new_load: int, loading_speed: int):
-        """
-        :direction: wektor przemieszczenia
-        :new_load: nowe obciążenie
-        :loading_speed: prędkość ładowania (wartość dodatnia jeśli robot się ładuje, zerowa jeśli nie)
-        :nearest_docking_station: najbliższa stacja dokująca
-        """
-        if self.__state.actual_load + new_load < 0:  # gdyby się zdarzyło, że chcielibyśmy wziąć z robota więcej niż
-            new_load = self.__state.actual_load      # ma załadowane
-        self.__state.update_state(direction, new_load, loading_speed)
-
-    def get_actual_position(self) -> np.array:
-        return self.__state.actual_position
-
-    def battery_low(self) -> bool:
-        return self.__state.battery_low
-
-    def failure_detected(self) -> bool:
-        return self.__state.failure
-
-    def get_id(self) -> int:
-        return self.__settings.id
+    def __init__(self, battery_size, starting_battery_level, max_load, starting_position: np.array, id: int):
+        self.battery_size = battery_size
+        self.starting_battery_level = starting_battery_level
+        self.max_load = max_load
+        self.starting_position = starting_position
+        self.id = id
 
 
 class RobotState:
@@ -85,11 +66,31 @@ class RobotState:
             self.actual_position += direction
 
 
-class RobotSettings:
+class Robot:
 
-    def __init__(self, battery_size, starting_battery_level, max_load, starting_position: np.array, id: int):
-        self.battery_size = battery_size
-        self.starting_battery_level = starting_battery_level
-        self.max_load = max_load
-        self.starting_position = starting_position
-        self.id = id
+    def __init__(self, settings: RobotSettings):
+        self.__settings = settings
+        self.__state = RobotState(self.__settings)
+
+    def make_move(self, direction: Tuple[int, int], new_load: int, loading_speed: int):
+        """
+        :direction: wektor przemieszczenia
+        :new_load: nowe obciążenie
+        :loading_speed: prędkość ładowania (wartość dodatnia jeśli robot się ładuje, zerowa jeśli nie)
+        :nearest_docking_station: najbliższa stacja dokująca
+        """
+        if self.__state.actual_load + new_load < 0:  # gdyby się zdarzyło, że chcielibyśmy wziąć z robota więcej niż
+            new_load = self.__state.actual_load      # ma załadowane
+        self.__state.update_state(direction, new_load, loading_speed)
+
+    def get_actual_position(self) -> np.array:
+        return self.__state.actual_position
+
+    def battery_low(self) -> bool:
+        return self.__state.battery_low
+
+    def failure_detected(self) -> bool:
+        return self.__state.failure
+
+    def get_id(self) -> int:
+        return self.__settings.id

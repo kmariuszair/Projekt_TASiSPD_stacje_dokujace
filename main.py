@@ -49,7 +49,7 @@ def run_algorithm(path_to_settings=None):
     robots_number = robots_simulation_data['robots_number']
     sim_time = robots_simulation_data['sim_time']
 
-    robots_simulation = MapGenerator.TrafficMapGenerator(barriers_map, docking_stations_map)
+    robots_simulation = MapGenerator.TrafficMapGenerator(barriers_map, docking_stations_map, robots_number)
 
     traffic_map = robots_simulation.generate_map(sim_time)
 
@@ -64,7 +64,7 @@ def run_algorithm(path_to_settings=None):
                                traffic_map,
                                iteration_lim=iteration_lim,
                                dynamic_neighborhood=dynamic_neighborhood,
-                               starting_solution=starting_solution)
+                               starting_solution=docking_stations_map)
     # ustawiamy limit iteracji, ewenetualnie można ustawić limit czasu, nie dajemy własnego rozwiązania początkowego
     # tylko pozwalamy generatorowi wygenerować to rozwiązanie
     logging.info("Rozpoczynam rozwiązywanie problemu")

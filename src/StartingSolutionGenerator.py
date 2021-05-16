@@ -31,7 +31,7 @@ class StartingSolutionGen(StartingSolutionGenInterface):
 
     Idea działania:
 
-    Otrzymujemy macierz z ilością klienktów w każdej komórce.
+    Otrzymujemy macierz z ilością klientów w każdej komórce.
     Tworzymy drugą macierz wypełnioną zerami o takich samych rozmiarach
     Nakładamy maski na tę drugą macierz
     Maski składają się z kul w naszej metryce o promieniu 2*D_max+1 wypełnionych jedynkami
@@ -51,9 +51,9 @@ class StartingSolutionGen(StartingSolutionGenInterface):
     |2 2 3 4 2|
     |1 2 3 2 2|
 
-    Algorym wyszukiwania rozwiązania początkowego działa tak,
+    Algorytm wyszukiwania rozwiązania początkowego działa tak,
     że wybierana jest komórka z największą wartością (jeśli jest kilka to sposób wyboru jest bez znaczenia)
-    Następnie zerowane są wszystie komórki w odległości D_max od danej komórki (w metryce nakładania maski)
+    Następnie zerowane są wszystkie komórki w odległości D_max od danej komórki (w metryce nakładania maski)
     Tak uzyskaną macierz ponownie wkładam do funkcji i otrzymujemy kolejne położenie paczkomatu
 
     Kryterium stopu: skończyły się paczkomaty
