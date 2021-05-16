@@ -8,6 +8,7 @@ import src.DataCollectorPlotter as DataCollectorPlotter
 import src.SolutionUtilization as SolutionUtilization
 from src.SettingMenager import setting_menager
 import src.FileMenager as FileMenager
+import src.MapGenerator as MapGenerator
 
 
 def run_algorithm(path_to_settings=None):
@@ -16,8 +17,8 @@ def run_algorithm(path_to_settings=None):
 
     data = setting_menager.get_Solver_settings()
     map_shape = data['map_shape']
-    clients_number = data['clients_number']
-    max_clients_number_in_cell = data['max_clients_number_in_cell']
+    # clients_number = data['clients_number']
+    # max_clients_number_in_cell = data['max_clients_number_in_cell']
     n_max = data['n_max']
     p_max = data['p_max']
     d_max = data['d_max']
@@ -41,17 +42,18 @@ def run_algorithm(path_to_settings=None):
 
     rootLogger.info('=========    Aktualny problem testowy: {}   ========='.format(path_to_settings.split('/')[-1][:-5]))
 
-    # Wczytaj zdefiniowaną macierz klientów lub wygeneruj losową
-    clients_map = None
-    p_gen = src.ProblemGenerator.RandomProblemGen(map_shape, clients_number, max_clients_number_in_cell)
-    if data['path_to_client_map'] is None:
-        clients_map = p_gen.generate_problem()
-        logging.info("Generuję losowy problem do rozwiązania")
-    else:
-        clients_map = setting_menager.get_client_map()
-        logging.info("Wczytuje problem do rozwiązania z pliku")
+    robots_simulation_data = setting_menager.get_RobotsSimulation_settings()
 
-    DataCollectorPlotter.plot_client_map(clients_map, max_clients_number_in_cell)
+    barriers_map = robots_simulation_data['barriers_map']
+    docking_stations_map = robots_simulation_data['docking_stations_map']
+    robots_number = robots_simulation_data['robots_number']
+    sim_time = robots_simulation_data['sim_time']
+
+    robots_simulation = MapGenerator.TrafficMapGenerator(barriers_map, docking_stations_map)
+
+    traffic_map = robots_simulation.generate_map(sim_time)
+
+    DataCollectorPlotter.plot_client_map(traffic_map, np.max(traffic_map) + 1)
     logging.info("Inicjalizuję solwer")
     solver = src.Solver.Solver(n_max,
                                p_max,
@@ -59,7 +61,7 @@ def run_algorithm(path_to_settings=None):
                                r,
                                min_time_in_tl,
                                min_time_in_lt_tl,
-                               clients_map,
+                               traffic_map,
                                iteration_lim=iteration_lim,
                                dynamic_neighborhood=dynamic_neighborhood,
                                starting_solution=starting_solution)
@@ -68,10 +70,10 @@ def run_algorithm(path_to_settings=None):
     logging.info("Rozpoczynam rozwiązywanie problemu")
     solution = solver.solve(record_and_plot_data=True, telemetry_on=True)
     # Sprawdzanie wariancji uzyskanych wyników
-    solution_grader = SolutionGrader.SolutionGrader(clients_map, solution)
-    solution_res = solution_grader.grade_solution(clients_map, solution)
+    solution_grader = SolutionGrader.SolutionGrader(traffic_map, solution)
+    solution_res = solution_grader.grade_solution(traffic_map, solution)
     # Wyznacz mapę wykorzystania paczkomatów
-    solution_util = SolutionUtilization.SolutionUtilization(clients_map, solution, p_max, d_max)
+    solution_util = SolutionUtilization.SolutionUtilization(traffic_map, solution, p_max, d_max)
     # Pokaż i zapis do pliku wykresy uzyskanego rozwiązania
     solution_util.plot_solution_utilization()
     solution_util.plot_clients_within_plt_zone()
@@ -86,81 +88,8 @@ def run_algorithm(path_to_settings=None):
 
 
 if __name__ == "__main__":
-    # OK - oznacza, że ograniczenia działają
     list_of_settings = [
-        # długo sie liczy
-        # 'settings/test_cases/case1/1a.json', # OK
-        # 'settings/test_cases/case1/1b.json', # OK
-        # 'settings/test_cases/case1/1c.json', # OK
-        # 'settings/test_cases/case1/1d.json', # OK
-        # 'settings/test_cases/case1/1e.json',
-
-        # 'settings/test_cases/case2/2a.json', # OK
-        # 'settings/test_cases/case2/2b.json', # OK
-        # 'settings/test_cases/case2/2c.json', # OK
-
-        # 'settings/test_cases/case3/3a.json', # OK
-        # 'settings/test_cases/case3/3b.json', # OK
-        # 'settings/test_cases/case3/3c.json',
-
-        # 'settings/test_cases/case4/4a.json', # OK
-        # 'settings/test_cases/case4/4b.json', # OK
-        # 'settings/test_cases/case4/4c.json', # OK
-        # 'settings/test_cases/case4/4d.json', # OK
-
-        # 'settings/test_cases/case5/5a.json', # OK
-        # 'settings/test_cases/case5/5b.json', # OK
-        # 'settings/test_cases/case5/5c.json', # OK
-
-        # 'settings/test_cases/case6/6a.json', # OK
-        # 'settings/test_cases/case6/6b.json', # OK
-        # 'settings/test_cases/case6/6c.json', # OK
-
-        # 'settings/test_cases/case7/7a.json', # OK
-        # 'settings/test_cases/case7/7b.json', # OK
-        # 'settings/test_cases/case7/7c.json', # OK
-
-        # 'settings/test_cases/case8/8a.json', # OK
-        # 'settings/test_cases/case8/8b.json', # OK
-        # 'settings/test_cases/case8/8c.json', # OK
-
-        # 'settings/test_cases/case9/9a.json', # OK
-        # 'settings/test_cases/case9/9b.json', # OK
-        # 'settings/test_cases/case9/9c.json', # OK
-
-        # bardzo długo się liczy
-        # 'settings/test_cases/case10/10real.json',
-        # 'settings/test_cases/case10/10random.json',
-
-        # bardzo długo się liczy
-        # 'settings/test_cases/case10/10breal.json', # OK
-        # 'settings/test_cases/case10/10brandom.json',
-
-        # 'settings/test_cases/case11/11comp_surv.json',
-        # 'settings/test_cases/case11/11tabu.json',
-
-        # 'settings/test_cases/case11/11bcomp_surv.json',
-        # 'settings/test_cases/case11/11btabu.json'
-
-        # 'settings/test_cases/case12/12_static.json', # OK
-        # 'settings/test_cases/case12/12_dynamic.json', # OK
-
-        # 'settings/test_cases/case12/12b_static.json', # OK
-        # 'settings/test_cases/case12/12b_dynamic.json' # OK
-
-        # 'settings/test_cases/case13/13_1.json',  # OK
-        # 'settings/test_cases/case13/13_2.json',  # OK
-        # 'settings/test_cases/case13/13_3.json',  # OK
-        # 'settings/test_cases/case13/13_4.json',  # OK
-        # 'settings/test_cases/case13/13_5.json',  # OK
-        # 'settings/test_cases/case13/13_6.json',  # OK
-        # 'settings/test_cases/case13/13_7.json',  # OK
-        # 'settings/test_cases/case13/13_8.json',  # OK
-        # 'settings/test_cases/case13/13_9.json',  # OK
-        # 'settings/test_cases/case13/13_10.json'  # OK
-
-        'settings/test_cases/case14/14_even.json',  # OK
-        'settings/test_cases/case14/14_peak.json'  # OK
+        # 'settings/test_cases/case1.json'
     ]
 
     itr_count = 1

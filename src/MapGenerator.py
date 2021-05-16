@@ -10,9 +10,11 @@ import RobotModel
 
 class TrafficMapGenerator:
 
-    def __init__(self, allowed_positions_map: np.array, robots_swarm: RobotsSwarm, docking_stations_map: np.array):
+    def __init__(self, allowed_positions_map: np.array, docking_stations_map: np.array, robots_number: int,
+                 robots_swarm: RobotsSwarm = None):
         self.__allowed_positions = allowed_positions_map
-        self.__robots_swarm = robots_swarm
+        # użyj przekazanego roju robotów lub wygeneruj losowy
+        self.__robots_swarm = robots_swarm if robots_swarm else RobotsSwarm(robots_number, allowed_positions_map)
         # tam, gdzie wartości są większe od zera, tam znajdują się stacje dokujące, wartość danej komórki oznacza
         # prędkość ładowania
         self.__docking_stations_map = docking_stations_map
@@ -124,7 +126,8 @@ def generate_swarm(robots_number: int, allowed_positions_map: np.array,
 
 class RobotsSwarm:
 
-    def __init__(self, robots_number: int, allowed_positions_map: np.array):
+    def __init__(self, robots_number: int, allowed_positions_map: np.array,
+                 predefined_settings: List[RobotModel.RobotSettings] = None):
         self.robots_list = generate_swarm(robots_number, allowed_positions_map, settings_list=predefined_settings)
         self.iter_count = 0
 

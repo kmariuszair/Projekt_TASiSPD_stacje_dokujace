@@ -73,6 +73,10 @@ class SettingsMenager:
         data = self.load_settings_from_file()
         return data['PlotSaver'][0]
 
+    def get_RobotsSimulation_settings(self) -> Dict:
+        data = self.load_settings_from_file()
+        return data['RobotsSimulation'][0]
+
     def get_client_map(self) -> np.array:
         """
         Wczytaj zdefiniowaną mapę klientów ze ścieżki zdefioniowanej w pliku konfiguracyjnym i zwróć tą macierz
