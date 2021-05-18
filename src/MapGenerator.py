@@ -93,10 +93,10 @@ class TrafficMapGenerator:
             for robot in self.__robots_swarm:  # aktualizacja stanu dla każdego robota
                 if robot.failure_detected():  # jeśli robot ma usterkę, to jest pomijany
                     continue                  # (nie zakładamy możliwości naprawy w czasie symulacji)
-                elif robot.is_loading():
+                elif robot.is_loading():  # jeśli robot się ładuje
                     r_pos = robot.get_actual_position()
                     robot.make_move(np.array([0, 0]), 0, self.__docking_stations_map[r_pos[0]][r_pos[1]])
-                else:
+                else:  # jeśli robot jest w stanie normalnej pracy
                     if robot.battery_low():  # jeśli robot ma mało baterii
                         r_pos = robot.get_actual_position()
                         if self.__docking_stations_map[r_pos[0]][r_pos[1]] > 0:

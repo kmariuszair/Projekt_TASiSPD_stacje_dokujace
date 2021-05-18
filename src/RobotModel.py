@@ -29,7 +29,7 @@ class RobotState:
         # oznacza usterkę (za niski poziom baterii lub zbyt duże obciążenie)
         self.failure = False
         self.battery_low = False
-        self.actual_position = starting_settings.starting_position
+        self.actual_position = np.copy(starting_settings.starting_position)
         self.is_loading = False
 
     def update_state(self, direction: np.array, new_load: int, loading_speed: int):
@@ -43,15 +43,10 @@ class RobotState:
             self.battery_level -= self.actual_load
             self.battery_level += loading_speed if self.battery_level + loading_speed < self.battery_size else \
                 self.battery_size - self.battery_level
-            if loading_speed > 0:
-                self.is_loading = True
-            else:
-                self.is_loading = False
+
+            self.is_loading = True if loading_speed > 0 and self.battery_level < self.battery_size else False
 
             self.actual_load += new_load
-
-            if self.battery_level <= 0 or self.actual_load > self.max_load:
-                self.failure = True
 
             if self.battery_level < 0.15 * self.battery_size:
                 self.battery_low = True
@@ -63,7 +58,11 @@ class RobotState:
             """
             # obliczanie najbardziej optymalnego kierunku ruchu do najbliższej stacji dokującej odbywać się będzie
             # na wyższym poziomie, ponieważ potrzebny jest dostęp do mapy
+            self.battery_level -= self.actual_load
             self.actual_position += direction
+
+        if self.battery_level <= 0 or self.actual_load > self.max_load:
+            self.failure = True
 
 
 class Robot:
@@ -72,7 +71,7 @@ class Robot:
         self.__settings = settings
         self.__state = RobotState(self.__settings)
 
-    def make_move(self, direction: Tuple[int, int], new_load: int, loading_speed: int):
+    def make_move(self, direction: np.array, new_load: int, loading_speed: int):
         """
         :direction: wektor przemieszczenia
         :new_load: nowe obciążenie
@@ -94,3 +93,6 @@ class Robot:
 
     def get_id(self) -> int:
         return self.__settings.id
+
+    def is_loading(self):
+        return self.__state.is_loading
