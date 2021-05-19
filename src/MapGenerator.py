@@ -6,15 +6,18 @@ import collections
 import numpy as np
 
 
-import RobotModel
+import src.RobotModel as RobotModel
 
 
 def generate_random_settings(settings_number: int, allowed_positions_map: np.array):
     """
     Generowanie losowych parametrów robotów
+
+    :settings_number: liczba ustawień do wygenerowania
+    :allowed_positions_map: mapa pozycji dozwolonych --- 1 oznacza brak bariery, 0 oznacza barierę
     """
     for id in range(settings_number):
-        battery_size = np.random.randint(100, 200)
+        battery_size = np.random.randint(101, 200)  # 101, bo battery_size musi byś większe od minimum z starting_battery_level
         starting_battery_level = np.random.randint(100, battery_size)
         max_load = np.random.randint(5, 20)
         x0, y0 = np.random.randint(0, allowed_positions_map.shape[0]), np.random.randint(0, allowed_positions_map.shape[1])
@@ -29,6 +32,10 @@ def generate_swarm(robots_number: int, allowed_positions_map: np.array,
                    settings_list: List[RobotModel.RobotSettings] = []) -> List[RobotModel.Robot]:
     """
     Tworzenie roju robotów na podstawie listy ustawień, lub, jeśli nie jest podana, na podstawie losowych parametrów
+
+    :robots_number: liczba robotów do wygenerowania
+    :allowed_positions_map: mapa dozwolonych pozycji
+    :settings_list: lista ustawień robotów (opcjonalna - gdy nie podana ustawienia są losowe)
     """
     robots_list = []
     if len(settings_list) == 0:
@@ -44,7 +51,7 @@ def generate_swarm(robots_number: int, allowed_positions_map: np.array,
 class RobotsSwarm:
 
     def __init__(self, robots_number: int, allowed_positions_map: np.array,
-                 predefined_settings: List[RobotModel.RobotSettings] = None):
+                 predefined_settings: List[RobotModel.RobotSettings] = []):
         self.robots_list = generate_swarm(robots_number, allowed_positions_map, settings_list=predefined_settings)
         self.iter_count = 0
 
@@ -55,6 +62,9 @@ class RobotsSwarm:
         return self.robots_list[item]
 
     def __iter__(self):
+        """
+        Utworzenie iteratora
+        """
         self.iter_count = 0
         return self
 
