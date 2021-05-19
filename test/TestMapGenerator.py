@@ -111,3 +111,6 @@ class TestTrafficMapGenerator(unittest.TestCase):
 
     def test_TrafficMapGenerator__goto_nearest_dock(self):
         pass
+
+    def test_generate_map(self):
+        pass
