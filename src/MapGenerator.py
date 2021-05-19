@@ -14,7 +14,7 @@ def generate_random_settings(settings_number: int, allowed_positions_map: np.arr
     Generowanie losowych parametrów robotów
 
     :settings_number: liczba ustawień do wygenerowania
-    :allowed_positions_map: mapa pozycji dozwolonych --- 1 oznacza brak bariery, 0 oznacza barierę
+    :allowed_positions_map: mapa pozycji dozwolonych --- 0 oznacza brak bariery, 1 oznacza barierę
     """
     for id in range(settings_number):
         battery_size = np.random.randint(101, 200)  # 101, bo battery_size musi byś większe od minimum z starting_battery_level
@@ -29,7 +29,7 @@ def generate_random_settings(settings_number: int, allowed_positions_map: np.arr
 
 
 def generate_swarm(robots_number: int, allowed_positions_map: np.array,
-                   settings_list: List[RobotModel.RobotSettings] = []) -> List[RobotModel.Robot]:
+                   settings_list: List[RobotModel.RobotSettings] = None) -> List[RobotModel.Robot]:
     """
     Tworzenie roju robotów na podstawie listy ustawień, lub, jeśli nie jest podana, na podstawie losowych parametrów
 
@@ -37,6 +37,7 @@ def generate_swarm(robots_number: int, allowed_positions_map: np.array,
     :allowed_positions_map: mapa dozwolonych pozycji
     :settings_list: lista ustawień robotów (opcjonalna - gdy nie podana ustawienia są losowe)
     """
+    if settings_list is None: settings_list = []
     robots_list = []
     if len(settings_list) == 0:
         # jeśli niezdefiniowano wcześniej listy ustawień to losuj ustawienia
@@ -51,7 +52,8 @@ def generate_swarm(robots_number: int, allowed_positions_map: np.array,
 class RobotsSwarm:
 
     def __init__(self, robots_number: int, allowed_positions_map: np.array,
-                 predefined_settings: List[RobotModel.RobotSettings] = []):
+                 predefined_settings: List[RobotModel.RobotSettings] = None):
+        if predefined_settings is None: predefined_settings = []
         self.robots_list = generate_swarm(robots_number, allowed_positions_map, settings_list=predefined_settings)
         self.iter_count = 0
 
@@ -81,7 +83,8 @@ class TrafficMapGenerator:
 
     def __init__(self, allowed_positions_map: np.array, docking_stations_map: np.array, robots_number: int,
                  robots_swarm: RobotsSwarm = None,
-                 robots_swarm_predefined_settings: List[RobotModel.RobotSettings] = []):
+                 robots_swarm_predefined_settings: List[RobotModel.RobotSettings] = None):
+        if robots_swarm_predefined_settings is None: robots_swarm_predefined_settings = []
         self.__allowed_positions = allowed_positions_map
         # użyj przekazanego roju robotów lub wygeneruj losowy
         self.__robots_swarm = robots_swarm if robots_swarm else RobotsSwarm(robots_number, allowed_positions_map,
@@ -131,7 +134,7 @@ class TrafficMapGenerator:
 
     def __generate_allowed_move(self, actual_position):
         random_move = np.random.randint(-1,2, 2)
-        while self.__allowed_positions[actual_position[0]+random_move[0]][actual_position[1]+random_move[1]] != 0:
+        while self.__allowed_positions[actual_position[0]+random_move[0]][actual_position[1]+random_move[1]] != 1:
             random_move = np.random.randint(-1, 2, 2)
         return random_move
 
