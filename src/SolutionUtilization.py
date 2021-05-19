@@ -5,7 +5,7 @@ import logging
 from src.PlotSaver import save_plot_to_file
 import src.Helpers as Helpers
 """
-    Klasa służąca do oblicznia wykorzystania paczkomatów oraz reprezentacji graficznej obciążenia
+    Klasa służąca do oblicznia wykorzystania stacji dokujących oraz reprezentacji graficznej obciążenia
 """
 
 
@@ -14,43 +14,43 @@ class SolutionUtilization:
     def __init__(self, _client_map: np.array, _solution: np.array, _p_max: int, _d_max: int):
         """
         :param _client_map: Mapa klientów
-        :param _solution: Rozmieszczenie paczkomatów
-        :param _p_max: Maksymalna pojemność pojedynczego paczkomatu
-        :param _d_max: Zasięg działania paczkomatu
+        :param _solution: Rozmieszczenie stacji dokujących
+        :param _p_max: Maksymalna pojemność pojedynczego stacji dokującej
+        :param _d_max: Zasięg działania stacji dokującej
         """
         self.__client_map = np.copy(_client_map)
         self.__plt_map = np.copy(_solution)
         self.__p_max = _p_max
         self.__d_max = _d_max
         self.__map_shape = self.__client_map.shape
-        # Macierz reprezentująca czy klient jest w strefie działania paczkomatu
+        # Macierz reprezentująca czy klient jest w strefie działania stacji dokujących
         self.__client_within_plt_zone = np.zeros(self.__map_shape)
-        # Macierz reprezentująca ile klientów ma w zasięgu działania dany paczkomat
-        # 1 - Klient jest W zasiegu paczkomatu
-        # 0 - Klient jest POZA zasiegiem paczkomatu
+        # Macierz reprezentująca ile klientów ma w zasięgu działania dana stacja dokująca
+        # 1 - Klient jest W zasiegu stacji dokujących
+        # 0 - Klient jest POZA zasiegiem stacji dokujących
         self.__plt_utilisation = np.zeros(self.__map_shape)
-        # Macierz reprezentująca ile klientów ma paczkomat bez ograniczeń
+        # Macierz reprezentująca ile klientów ma stację dokującą bez ograniczeń
         self.__plt_utilisation_without_d_max = np.zeros(self.__map_shape)
 
-        # Lista przedstawiająca średnią odległość komórki od paczkomatu w zależności od ilości klientów w tej komórce.
+        # Lista przedstawiająca średnią odległość komórki od stacji dokujących w zależności od ilości klientów w tej komórce.
         # Liczba klientów jest indeksem
         self.__av_distance_for_clients_cell = dict()
-        # Średnia liczba klientów w zależności od odległosci od paczkomatu
+        # Średnia liczba klientów w zależności od odległosci od stacji dokujących
         self.__av_clients_at_given_range = dict()
-        # Macierz odległości do najbliższego paczkomatu. Wartość komórki określa jej oddalenie od najbliższego
-        # paczkomatu
+        # Macierz odległości do najbliższej stacji dokujących. Wartość komórki określa jej oddalenie od najbliższej
+        # stacji dokującej
         self.__distance_matrix = np.zeros(self.__map_shape)
 
-        # Wygeneruj dla danych wejściowych macierze obciążenia paczkomatów, stref działania itp
+        # Wygeneruj dla danych wejściowych macierze obciążenia stacji dokujących, stref działania itp
         self.__calculate()
 
     def calculate_utilization_of_solution(self, _client_map: np.array, _plt_map: np.array, _p_max: int, _d_max: int):
         """
-        Funckja służaca do ponownego generowania rozwiązania zużycia paczkomatów
+        Funckja służaca do ponownego generowania rozwiązania zużycia stacji dokujących
         :param _client_map: Mapa klientów
-        :param _plt_map: Rozmieszczenie paczkomatów
-        :param _p_max: Maksymalna pojemność pojedynczego paczkomatu
-        :param _d_max: Maksymalny zasięg działania paczkomatu
+        :param _plt_map: Rozmieszczenie stacji dokujących
+        :param _p_max: Maksymalna pojemność pojedynczej stacji dokującej
+        :param _d_max: Maksymalny zasięg działania stacji dokujących
         :return: Funkcja wewnętrzenie zapisuje rozwiązanie pod zmienna self.__plt_utilisation_without_d_max
         """
         self.__client_map = np.copy(_client_map).T
@@ -64,14 +64,14 @@ class SolutionUtilization:
 
     def plot_solution_utilization(self):
         """
-            Funkcja reprezentująca wykorzystanie paczkomatów w zasięgu ich działania
+            Funkcja reprezentująca wykorzystanie stacji dokujących w zasięgu ich działania
         """
         fig = plt.figure(figsize=(16, 12))
         ax = fig.add_subplot(111)
         im = ax.imshow(self.__plt_utilisation, origin='lower', interpolation='None', cmap='Reds')
         plt.xlabel('Pozycja osi X')
         plt.ylabel('Pozycja osi Y')
-        plt.title('Wykorzystanie poszczególnych paczkomatów w zasięgu ich działania')
+        plt.title('Wykorzystanie poszczególnych stacji dokujących w zasięgu ich działania')
         size = self.__plt_utilisation.shape
         for (j, i), label in np.ndenumerate(self.__plt_utilisation):
             if int(label) != 0 and self.__plt_map[j][i]:
@@ -79,38 +79,38 @@ class SolutionUtilization:
         plt.xticks(range(0, size[1]))
         plt.yticks(range(0, size[0]))
         fig.colorbar(im)
-        save_plot_to_file(plt, 'Dystrybucja klientow do paczkomatow')
+        save_plot_to_file(plt, 'Dystrybucja klientow do stacji dokujących')
         plt.show()
 
     def plot_clients_within_plt_zone(self):
         """
-            Funkcja służąca do reprezentacji graficznej obszaru obsługiwanego przez paczkomaty
+            Funkcja służąca do reprezentacji graficznej obszaru obsługiwanego przez stacje dokujące
         """
         fig = plt.figure(figsize=(16, 12))
         ax = fig.add_subplot(111)
         im = ax.imshow(self.__client_within_plt_zone, origin='lower', interpolation='None', cmap='cool')
         plt.xlabel('Pozycja osi X')
         plt.ylabel('Pozycja osi Y')
-        plt.title('Zasięg działania paczkomatów')
+        plt.title('Zasięg działania stacji dokujących')
         size = self.__client_within_plt_zone.shape
         for (j, i), label in np.ndenumerate(self.__client_map):
             if self.__plt_map[j][i]:
                 plt.plot(i, j, 'wo')
         plt.xticks(range(0, size[1]))
         plt.yticks(range(0, size[0]))
-        save_plot_to_file(plt, 'Zasieg dzialania paczkomatow')
+        save_plot_to_file(plt, 'Zasieg dzialania stacji dokujących')
         plt.show()
 
     def plot_solution_utilization_without_d_max(self):
         """
-            Funkcja reprezentująca wykorzystanie paczkomatów BEZ zasięgu ich działania
+            Funkcja reprezentująca wykorzystanie stacji dokujących BEZ zasięgu ich działania
         """
         fig = plt.figure(figsize=(16, 12))
         ax = fig.add_subplot(111)
         im = ax.imshow(self.__plt_utilisation_without_d_max, origin='lower', interpolation='None', cmap='YlOrBr')
         plt.xlabel('Pozycja osi X')
         plt.ylabel('Pozycja osi Y')
-        plt.title('Wykorzystanie poszczególnych paczkomatów bez ograniczeń odległościowych')
+        plt.title('Wykorzystanie poszczególnych stacji dokujących bez ograniczeń odległościowych')
         size = self.__plt_utilisation_without_d_max.shape
         for (j, i), label in np.ndenumerate(self.__plt_utilisation_without_d_max):
             if int(label) != 0 and self.__plt_map[j][i]:
@@ -118,20 +118,20 @@ class SolutionUtilization:
         plt.xticks(range(0, size[1]))
         plt.yticks(range(0, size[0]))
         fig.colorbar(im)
-        save_plot_to_file(plt, 'Dystrybucja klientow do paczkomatow BEZ ograniczenia ')
+        save_plot_to_file(plt, 'Dystrybucja klientow do stacji dokujących BEZ ograniczenia ')
         plt.show()
 
     def get_plt_utilization_without_d_max(self):
         """
-        Funkcja wzracająca kopię mapy wykorzystania paczkomatów bez ograniczenia odległościowego
-        :return: Macierz wykorzystania paczkomatów bez ograniczenia odległościowego
+        Funkcja wzracająca kopię mapy wykorzystania stacji dokujących bez ograniczenia odległościowego
+        :return: Macierz wykorzystania stacji dokujących bez ograniczenia odległościowego
         """
         return np.copy(self.__plt_utilisation_without_d_max)
 
     def get_plt_utilization(self):
         """
-        Funkcja wzracająca kopię mapy wykorzystania paczkomatów
-        :return: Macierz wykorzystania paczkomatów
+        Funkcja wzracająca kopię mapy wykorzystania stacji dokujących
+        :return: Macierz wykorzystania stacji dokujących
         """
         return np.copy(self.__plt_utilisation)
 
@@ -139,10 +139,10 @@ class SolutionUtilization:
         """
             Funkcja wypisująca w konsoli informacje zebrane podczas działania algorytmu
             Reprezentowane są następujące informacje:
-                - Ile klientow nie ma dostępu do poczkomatów, ile stanowi to całość populacji
-                - Mediana, średnie obciążenie paczkomatów, zużycie całkowitej pojemności
+                - Ile klientow nie ma dostępu do stacji dokujących, ile stanowi to całość populacji
+                - Mediana, średnie obciążenie stacji dokujących, zużycie całkowitej pojemności
         """
-        #  Wyświetlanie informacji o klientach bez dostępu do paczkomatów
+        #  Wyświetlanie informacji o klientach bez dostępu do stacji dokujących
         logging.info('>------      Informacje o uzyskanym rozwiązaniu      ------<')
         total_clients_without_plt = 0
         zones_without_plt = 0
@@ -151,23 +151,23 @@ class SolutionUtilization:
                 total_clients_without_plt += self.__client_map[j][i]
                 zones_without_plt += 1
         total_clients = np.sum(self.__client_map)
-        total_client_info = 'Liczba klientów bez dostępu do paczkomatów wynosi: {}'.format(total_clients_without_plt)
+        total_client_info = 'Liczba klientów bez dostępu do stacji dokujących wynosi: {}'.format(total_clients_without_plt)
         logging.info(total_client_info)
         total_client_percent = float(total_clients_without_plt/total_clients) * 100
         total_client_info = 'Stanowi to: {} / {} [{:.2f} %] wszystkich klientów'.format(total_clients_without_plt,
                                                                                         total_clients,
                                                                                         total_client_percent)
         logging.info(total_client_info)
-        #  Sekcja odpowiedzialna za wyświetlania informacji o obciążeniach paczkomatów
+        #  Sekcja odpowiedzialna za wyświetlania informacji o obciążeniach stacji dokujących
         logging.info(' ')
         total_plt_load_average = np.sum(self.__plt_utilisation) / np.sum(self.__plt_map)
-        logging.info('Średnie obciążenie paczkomatów wynosi: {} / {}'.format(total_plt_load_average, self.__p_max))
+        logging.info('Średnie obciążenie stacji dokujących wynosi: {} / {}'.format(total_plt_load_average, self.__p_max))
         total_plt_load_median = np.median(self.__plt_utilisation[self.__plt_map == 1])
-        logging.info('Mediana obciążenia paczkomatów wynosi: {} / {}'.format(total_plt_load_median, self.__p_max))
+        logging.info('Mediana obciążenia stacji dokujących wynosi: {} / {}'.format(total_plt_load_median, self.__p_max))
         total_plt_load_max = np.max(self.__plt_utilisation)
-        logging.info('Maksymalne obciążenie paczkomatów wynosi: {} / {}'.format(total_plt_load_max, self.__p_max))
+        logging.info('Maksymalne obciążenie stacji dokujących wynosi: {} / {}'.format(total_plt_load_max, self.__p_max))
         total_plt_load_min = np.min(self.__plt_utilisation[self.__plt_map == 1])
-        logging.info('Minimalne obciążenie paczkomatów wynosi: {} / {}'.format(total_plt_load_min, self.__p_max))
+        logging.info('Minimalne obciążenie stacji dokujących wynosi: {} / {}'.format(total_plt_load_min, self.__p_max))
         logging.info(' ')
 
     def plot_av_clients_at_given_range(self):
@@ -184,9 +184,9 @@ class SolutionUtilization:
         ax.set_yticklabels(dist)
         ax.invert_yaxis()  # labels read top-to-bottom
         ax.set_xlabel('Średnia liczba klientów w danej komórce')
-        ax.set_ylabel('Odległość do najbliższego paczkomatu')
-        ax.set_title('Średnia ilość klientow w danej komórce w zależności od odległości do paczkomatu')
-        save_plot_to_file(plt, 'srednia_ilosc_klientow_w_danej_odleglosc_od_paczkomatu')
+        ax.set_ylabel('Odległość do najbliższej stacji dokującej')
+        ax.set_title('Średnia ilość klientów w danej komórce w zależności od odległości do stacji dokującej')
+        save_plot_to_file(plt, 'srednia_ilosc_klientow_w_danej_odleglosc_od_stacji_dokujacej')
         plt.show()
 
     def plot_av_dist_for_cell_with_given_cliens(self):
@@ -202,15 +202,15 @@ class SolutionUtilization:
         ax.set_yticks(y_pos)
         ax.set_yticklabels(clients_no)
         ax.invert_yaxis()  # labels read top-to-bottom
-        ax.set_xlabel('Średnia odległość do najbliższego paczkomatu')
+        ax.set_xlabel('Średnia odległość do najbliższej stacji dokującej')
         ax.set_ylabel('Ilość klientów w danej komórce')
-        ax.set_title('Średnia odległość do najbliższego paczkomatu w zależności od ilości klientów w danej komórce')
+        ax.set_title('Średnia odległość do najbliższej stacji dokującej w zależności od ilości klientów w danej komórce')
         save_plot_to_file(plt, 'srednia_odleglosc_w_zal_od_ilosc_klientow')
         plt.show()
 
     def __calculate(self):
         """
-            Funkcja wewnętrzna obliczająca macierze wykrozsytanie paczkomatów oraz stref ich działania
+            Funkcja wewnętrzna obliczająca macierze wykrozsytanie stacji dokujących oraz stref ich działania
         """
         temp_client_map = np.copy(self.__client_map)
         self.__plt_utilisation_without_d_max = np.zeros(self.__map_shape)
@@ -235,7 +235,7 @@ class SolutionUtilization:
 
     def __distribute_client_to_plt(self, x_plt: int, y_plt: int, radius: int):
         """
-            Funckja przydzielające klientów do każdego paczkomatu
+            Funckja przydzielające klientów do każdego stacji dokujących
         """
         x_start = x_plt - radius
         if x_start < 0:
@@ -259,7 +259,7 @@ class SolutionUtilization:
                         total_clients_per_plt = self.__plt_utilisation_without_d_max[x_plt][y_plt] + clients
                         self.__plt_utilisation_without_d_max[x_plt][y_plt] = total_clients_per_plt
                         self.__client_map[x][y] -= clients
-                        if radius <= self.__d_max:  # Uwględnie zasiegu działania paczkomatu
+                        if radius <= self.__d_max:  # Uwględnie zasiegu działania stacji dokujących
                             self.__plt_utilisation[x_plt][y_plt] = total_clients_per_plt
 
     def __calculate_distance_matrix(self):
@@ -290,7 +290,7 @@ class SolutionUtilization:
 
     def __calculate_av_distances(self):
         """
-        Funkcja licząca średnią odległość od paczkomatu dla komórek o zadanej ilości klientów.
+        Funkcja licząca średnią odległość od stacji dokujących dla komórek o zadanej ilości klientów.
         Modyfikuje self.__av_distance_for_clients_cell
         :return:
         """
@@ -302,7 +302,7 @@ class SolutionUtilization:
 
     def __calculate_av_clients(self):
         """
-        Funkcja licząca średnią ilość klientów w zadanej odległości od najbliższego paczkomatu.
+        Funkcja licząca średnią ilość klientów w zadanej odległości od najbliższego stacji dokujących.
         Modyfikuje self.__av_clients_at_given_range.
         :return:
         """

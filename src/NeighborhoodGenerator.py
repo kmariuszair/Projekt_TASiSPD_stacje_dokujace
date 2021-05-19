@@ -27,7 +27,7 @@ def neighborhood_generator(parcel_locker_matrix: np.array, r: int):
     |0 0 0 0| |0 0 0 0| |0 0 0 1| |0 0 0 0| |0 0 0 0| |0 0 0 0| |0 1 0 0|
     |0 0 0 0| |0 0 0 0| |0 0 0 0| |0 0 0 1| |0 0 1 0| |0 1 0 0| |0 0 0 0|
 
-    :param parcel_locker_matrix: macierz paczkomatów
+    :param parcel_locker_matrix: macierz stacji dokujących
     :param r:
     :return neighbor:
     """

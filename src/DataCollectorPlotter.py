@@ -148,7 +148,7 @@ class DataCollectorPlotter:
         """
         Funkcja zbierająca odpowiednie dane do reprezentacji przebiegu algorytmu.
         Są to paramentry algorytmu w danej iteracji
-        :param x_a_itr: Bieżące rozmieszczenie paczkomatów
+        :param x_a_itr: Bieżące rozmieszczenie stacji dokujących
         :param Q_a_itr: Funkcja kosztu w
         :param tabu_list: Krótkoterminowa lista tabu
         :param long_term_tabu_list: Długoterminowa lista tabu
@@ -182,7 +182,7 @@ class DataCollectorPlotter:
         """
         if self.__show_plot_of_Q_a:  # Wykres wartości fukncji celu w danej iteracji
             self.__plot_Q_a()
-        if self.__show_map_of_best_plt_position:  # Mapa optymalnego rozmieszczenia paczkomatów
+        if self.__show_map_of_best_plt_position:  # Mapa optymalnego rozmieszczenia stacji dokujących
             self.__plot_plt_map()
         if self.__show_plot_of_total_taboo_list_elements:  # Wykres ilości elementów na liście tabu w danej itracji
             self.__plot_tabu_list_elements()
@@ -200,7 +200,7 @@ class DataCollectorPlotter:
             self.__plot_elems_in_nei()
         if self.__show_map_of_total_moves:  # Mapa wszystkich ruchów wykonanych podczas działania algorytmu
             self.__generate_plot_of_moves()
-        if self.__generate_dynamic_map_of_total_moves:  # Animacja przemieszczeń paczkomatów podczas działania algorytmu
+        if self.__generate_dynamic_map_of_total_moves:  # Animacja przemieszczeń stacji dokujących podczas działania algorytmu
             self.__generate_dynamic_map_of_moves()
 
     def __plot_Q_a(self):
@@ -221,7 +221,7 @@ class DataCollectorPlotter:
 
     def __plot_plt_map(self):
         """
-        Funkcja reprezentująca optymalne rozmieszczenie paczkomatów
+        Funkcja reprezentująca optymalne rozmieszczenie stacji dokujących
         """
         if self.__client_map is None:
             fig = plt.figure()
@@ -230,8 +230,8 @@ class DataCollectorPlotter:
             im = ax.imshow(x_a, origin='lower', interpolation='None', cmap='Reds')
             plt.xlabel('Pozycja osi Y')
             plt.ylabel('Pozycja osi X')
-            plt.title('Optymalna pozycja paczkomatu')
-            save_plot_to_file(plt, 'Optymalna_pozycja_paczkomatu')
+            plt.title('Optymalna pozycja stacji dokujących')
+            save_plot_to_file(plt, 'Optymalna_pozycja_stacji_dokujacych')
             plt.show()
         else:
             fig = plt.figure()
@@ -246,9 +246,9 @@ class DataCollectorPlotter:
                         plt.plot(x, y, 'ro')
             plt.xlabel('Pozycja osi Y')
             plt.ylabel('Pozycja osi X')
-            plt.title('Optymalna pozycja paczkomatu')
+            plt.title('Optymalna pozycja stacji dokujących')
             fig.colorbar(im)
-            save_plot_to_file(plt, 'Optymalna_pozycja_paczkomatu')
+            save_plot_to_file(plt, 'Optymalna_pozycja_stacji_dokujacych')
             plt.show()
 
     def __generate_dynamic_map_of_moves(self):
@@ -259,7 +259,7 @@ class DataCollectorPlotter:
         Wystarczy zmienić odtwarzać na VLC i problem znika.
         """
         if self.__client_map is None:
-            raise ValueError('Nie można wygenerować zmian paczkomatów bez mapy klientów!')
+            raise ValueError('Nie można wygenerować zmian stacji dokujących bez mapy klientów!')
         x_size = self.__client_map.shape[1]
         y_size = self.__client_map.shape[0]
         frame_offset = 3
@@ -267,7 +267,7 @@ class DataCollectorPlotter:
         x_a_copy = np.copy(self.__x_a_list)
         """
             Funkcja wewnętrza służąca do generowania klatki animacjia. 
-            Animuje ona ruch wykonany przez paczkomat w danej iteracji.
+            Animuje ona ruch wykonany przez stacje dokujące w danej iteracji.
         """
         def animate(frame):
             if frame >= self.__iteration_count:
@@ -297,10 +297,10 @@ class DataCollectorPlotter:
             plt.xlabel('Pozycja osi Y')
             plt.ylabel('Pozycja osi X')
             if frame == self.__min_Q_a_pos:
-                title = 'Optymalna pozycja paczkomatu dla iteracji {}\n Funkcja celu: {}'.format(frame + 1, self.__Q_a_list[self.__min_Q_a_pos])
+                title = 'Optymalna pozycja stacji dokujących dla iteracji {}\n Funkcja celu: {}'.format(frame + 1, self.__Q_a_list[self.__min_Q_a_pos])
                 plt.title(title, color='r')
             else:
-                title = 'Pozycja paczkomatu dla iteracji {}\n Funkcja celu: {}'.format(frame + 1, self.__Q_a_list[frame])
+                title = 'Pozycja stacji dokujących dla iteracji {}\n Funkcja celu: {}'.format(frame + 1, self.__Q_a_list[frame])
                 plt.title(title)
 
             plt.colorbar(im)
@@ -319,7 +319,7 @@ class DataCollectorPlotter:
         :return:
         """
         if self.__client_map is None:
-            raise ValueError('Nie można wygenerować zmian paczkomatów bez mapy klientów!')
+            raise ValueError('Nie można wygenerować zmian stacji dokujących bez mapy klientów!')
         x_size = self.__client_map.shape[1]
         y_size = self.__client_map.shape[0]
         fig, ax = plt.subplots()
@@ -340,7 +340,7 @@ class DataCollectorPlotter:
             plt.arrow(x_arrow_begin, y_arrow_begin, dx, dy, color='white', width=0.005,
                       length_includes_head=True, head_width=0.1, head_length=0.15)
             plt.scatter(x_arrow_begin, y_arrow_begin, facecolors='none', edgecolors='white')
-        # Zaznaczenie finalnej pozycji paczkomatów
+        # Zaznaczenie finalnej pozycji stacji dokujących
         x_a = x_a_copy[self.__iteration_count - 1]
         for x in range(0, x_size):
             for y in range(0, y_size):
@@ -351,7 +351,7 @@ class DataCollectorPlotter:
         title = 'Mapa przemieszczen podczas działania algorytmu'
         plt.title(title)
         plt.colorbar(im)
-        save_plot_to_file(plt, 'Mapa_przemieszczen_paczkomatow')
+        save_plot_to_file(plt, 'Mapa_przemieszczen_stacji_dokujacych')
         plt.show()
 
     def __plot_tabu_list_elements(self):

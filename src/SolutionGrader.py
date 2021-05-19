@@ -41,9 +41,9 @@ class SolutionGrader(SolutionGraderInterface):
 
     def __map_clients_to_nearest_pl(self) -> np.array:
         """
-        Funkcja licząca ile klientów ma najbliżej do danego paczkomatu.
+        Funkcja licząca ile klientów ma najbliżej do danej stacji dokującej.
 
-        :return nearest_clients_no: macierz, gdzie w miejscu paczkomatów wpisana jest ilość klientów,
+        :return nearest_clients_no: macierz, gdzie w miejscu stacji dokujących wpisana jest ilość klientów,
                                     którzy mają do niego najbliżej
         """
         nearest_clients_no = np.zeros(self.__map_shape)
@@ -56,10 +56,10 @@ class SolutionGrader(SolutionGraderInterface):
 
     def __find_nearest_pl(self, clients_cell_coords: Tuple[int, int]) -> Tuple[int, int]:
         """
-        Funkcja znajdująca najbliższy paczkomat dla danej komórki z klientami.
+        Funkcja znajdująca najbliższą stację dokującą dla danej komórki z klientami.
 
-        :param clients_cell_coords:  współrzędne komórki z klientami, dla których szukamy najbliższego paczkomatu
-        :return nearest_pl: współrzędne najbliższego paczkomatu
+        :param clients_cell_coords:  współrzędne komórki z klientami, dla których szukamy najbliższej stacji dokującej
+        :return nearest_pl: współrzędne najbliższej stacji dokującej
         """
         cx, cy = clients_cell_coords
         

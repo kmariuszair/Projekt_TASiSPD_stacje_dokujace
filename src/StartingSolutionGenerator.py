@@ -54,11 +54,11 @@ class StartingSolutionGen(StartingSolutionGenInterface):
     Algorytm wyszukiwania rozwiązania początkowego działa tak,
     że wybierana jest komórka z największą wartością (jeśli jest kilka to sposób wyboru jest bez znaczenia)
     Następnie zerowane są wszystkie komórki w odległości D_max od danej komórki (w metryce nakładania maski)
-    Tak uzyskaną macierz ponownie wkładam do funkcji i otrzymujemy kolejne położenie paczkomatu
+    Tak uzyskaną macierz ponownie wkładam do funkcji i otrzymujemy kolejne położenie stacji dokującej
 
-    Kryterium stopu: skończyły się paczkomaty
+    Kryterium stopu: skończyły się stacje dokujące
 
-    Jeśli pozostały paczkomaty, a miejsca do ich umieszczenia nie ma (wszystkie pozostałe komórki
+    Jeśli pozostały stacje dokujące, a miejsca do ich umieszczenia nie ma (wszystkie pozostałe komórki
     nie spełniają ograniczeń) to rzucany jest wyjątek, że nie można wygenerować rozwiązania początkowego
     """
 
@@ -105,7 +105,7 @@ class StartingSolutionGen(StartingSolutionGenInterface):
                 max_ind = np.unravel_index(np.argmax(self.__mask_matrix, axis=None), self.__mask_matrix.shape)
 
                 if self.__check_client_number_in_pl_range(max_ind) > self.__p_max or starting_solution[max_ind] == 1:
-                    # wstawiam -1, żeby maksimum mi nie znajdowało tej komórki (zabraniam ustawienia paczkomatu
+                    # wstawiam -1, żeby maksimum mi nie znajdowało tej komórki (zabraniam ustawienia stacji dokujących
                     # w to miejsce) jeśli max to będzie -1, to wtedy generator kończy działanie
                     self.__mask_matrix[max_ind] = -1
                 else:
@@ -118,7 +118,7 @@ class StartingSolutionGen(StartingSolutionGenInterface):
 
     def __reduce_temp_clients_map(self, cell_coord: Tuple[int, int]):
         """
-        Usuwa klientów w tymczasowej mapie po wstawieniu w okolicy paczkomatu
+        Usuwa klientów w tymczasowej mapie po wstawieniu w okolicy stacji dokujących
 
         :param cell_coord: współrzędne punktu, którego otoczenia w mapie klientów ma być zredukowane
         :return:
@@ -170,10 +170,10 @@ class StartingSolutionGen(StartingSolutionGenInterface):
 
     def __check_client_number_in_pl_range(self, pl_coords: Tuple[int, int]) -> int:
         """
-        Liczy liczbę klientów w zasięgu danego paczkomatu
+        Liczy liczbę klientów w zasięgu danej stacji dokującej
 
-        :param pl_coords: współrzędne paczkomatu
-        :return clients_number: liczba klientów w zasięgu danego paczkomatu
+        :param pl_coords: współrzędne stacji dokującej
+        :return clients_number: liczba klientów w zasięgu danej stacji dokującej
         """
         y, x = pl_coords
         r = self.__d_max

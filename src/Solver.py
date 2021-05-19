@@ -116,9 +116,9 @@ class Solver:
         Inicjalizacja atrybutów klasy. Atrybuty te są konieczne do rozwiązania problemu.
         Wstępnie inicjalizuje zmienne, które będą potrzebne na dalszym etapie rozwiązywania problemu.
 
-        :param n_max: ilość paczkomatów
-        :param p_max: pojemność paczkomatów
-        :param d_max: zasięg (promień) działania paczkomatów
+        :param n_max: ilość stacji dokujących
+        :param p_max: pojemność stacji dokujących
+        :param d_max: zasięg (promień) działania stacji dokujących
         :param r: wielkość (promień) sąsiedztwa danego rozwiązania
         :param min_time_in_tl: rozmiar listy tabu
         :param client_map: wcześniej wygenerowana mapa z klientami
@@ -310,7 +310,7 @@ class Solver:
                 self.__Q_a = self.__Q_min_new_tabu
                 # zmodyfikuj odpowiednią listę tabu, na podstawie której rozwiązaniu tutaj trafiło
                 if self.__is_in_long_term_tabu_list(self.__x_a)[0]:
-                    # potrzebujemy jednej jedynki w miejscu, gdzie stał paczkomat, którego nie wolno było ruszyć
+                    # potrzebujemy jednej jedynki w miejscu, gdzie stała stacja dokująca, którego nie wolno było ruszyć
                     move = prev_x_a - self.__x_a
                     self.__delete_given_move_from_long_term_tabu(move == 1)
                     # jeśli jest na obu listach, to trzeba też usunąć z listy krótkoterminowej
@@ -319,7 +319,7 @@ class Solver:
                         move = (self.__tabu_list > 0) * (self.__x_a > 0)
                         self.__delete_given_move_from_tabu(move)
                 else:
-                    # potrzebujemy miejsca, w które nie wolno było postawić paczkomatu
+                    # potrzebujemy miejsca, w które nie wolno było postawić stacji dokujących
                     move = (self.__tabu_list > 0) * (self.__x_a > 0)
                     self.__delete_given_move_from_tabu(move)
             if self.__Q_a < self.__Q_min:
@@ -382,7 +382,7 @@ class Solver:
     def __dist_to_nearest_pl(self, actual_point: Tuple[int, int], pl_map: np.array) -> int:
 
         """
-        Funkcja zwracająca odległość pomiędzy punktem [actual_point] a najbliższym paczkomatem, jeśli ta odległość
+        Funkcja zwracająca odległość pomiędzy punktem [actual_point] a najbliższą stacją dokującą, jeśli ta odległość
         jest mniejsza od D_max. W przeciwnym wypadku zwraca powiększoną wartość tej najmniejszej odległości.
 
         :param pl_map:
@@ -418,7 +418,7 @@ class Solver:
         1) oblicza różnicę między macierzami x_new (reprezentującą nowe rozwiązanie)
            oraz self.__tabu_list (oznaczającej statyczną listę tabu)
         2) liczy ilość elementów dodatnich w tej macierzy oznaczającej różnicę
-        3) jeśli ilość tych elementów jest mniejsza od liczby paczkomatów na mapie
+        3) jeśli ilość tych elementów jest mniejsza od liczby stacji dokujących na mapie
            to oznacza, że dane rozwiązanie znajduje się na liście tabu
            W przeciwnym wypadku nie znajduje się na tej liście.
         Przykład:
@@ -452,10 +452,10 @@ class Solver:
     def __is_in_long_term_tabu_list(self, x_new: np.array) -> Tuple[bool, float]:
         """
         Sprawdza, czy kandydat jest na długoterminowej liście tabu.
-        Długoterminowa lista tabu składa się elementów niezerowych w miejscach, w których są paczkomaty,
+        Długoterminowa lista tabu składa się elementów niezerowych w miejscach, w których są stacje dokujące,
         których nie możemy ruszać.
 
-        Sprawdza, czy we wszystkich polach, gdzie macierz tabu ma wartości niezerowe, są paczkomaty
+        Sprawdza, czy we wszystkich polach, gdzie macierz tabu ma wartości niezerowe, są stacje dokujące
 
         :param x_new: nowe rozwiązanie
         :return:
@@ -469,7 +469,7 @@ class Solver:
     def __change_times_to_left_tl(self):
         """
         Edytuje naszą listę tabu (czyli tą macierz z jedynkami, gdzie oznaczają one miejsca, w których postawiono już
-        paczkomaty we wcześniejszych iteracjach).
+        stacje dokujące we wcześniejszych iteracjach).
         Z racji przyjętej formy tej listy, zmniejszenie współczynnika kadencyjności do 0 jest równoznaczne
         z wypadnięciem danego rozwiązania z listy tabu
         """
@@ -485,7 +485,7 @@ class Solver:
         """
         Usuwa dany ruch z listy tabu.
         Najlepiej, gdybyśmy pod pojęciem ruchu rozumieli macierz z jedną jedynką, która oznacza komórkę,
-        w której już był postawiony paczkomat
+        w której już była postawiona stacja dokująca
 
         :param to_delete: współrzędne elementu dla macierzy listy tabu, który powinien zostać usunięty (wyzerowany)
         """
@@ -493,7 +493,7 @@ class Solver:
 
     def __delete_given_move_from_long_term_tabu(self, to_delete: np.array):
         """
-        Usuwa miejsce paczkomatu z długoterminowej listy tabu.
+        Usuwa miejsce stacji dokujących z długoterminowej listy tabu.
 
         :param to_delete: współrzędne elementu dla macierzy listy tabu, który powinien zostać usunięty (wyzerowany)
         """
@@ -501,9 +501,9 @@ class Solver:
 
     def __add_move_to_tabu_list(self, move: np.array, time_to_stay_in_tl: int = None):
         """
-        Dodaje byłą pozycję paczkomatu do listy tabu
+        Dodaje byłą pozycję stacji dokujących do listy tabu
 
-        :param move: współrzędne komórki, z której przeniesiono paczkomat
+        :param move: współrzędne komórki, z której przeniesiono stację dokującą
                     (przekazywane jako macierz z jedną wartością True)
         """
         if time_to_stay_in_tl is None:
@@ -513,9 +513,9 @@ class Solver:
 
     def __add_move_to_long_term_tabu_list(self, move: np.array, time_to_stay_in_lt_tl: int = None):
         """
-        Dodaje byłą pozycję paczkomatu do listy tabu
+        Dodaje byłą pozycję stacji dokujących do listy tabu
 
-        :param move: współrzędne komórki, z której przeniesiono paczkomat
+        :param move: współrzędne komórki, z której przeniesiono stację dokującą
                     (przekazywane jako macierz z jedną wartością True)
         """
         if time_to_stay_in_lt_tl is None:

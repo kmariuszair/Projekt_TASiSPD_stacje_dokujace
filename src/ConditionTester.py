@@ -35,8 +35,8 @@ class OneConditionTester(ConditionTesterInterface):
 
                  clients_map: np.array):
         """
-        :param p_max: maksymalna liczba klientów w zasięgu działania paczkomatu
-        :param d_max: zasięg działania paczkomatu
+        :param p_max: maksymalna liczba klientów w zasięgu działania stacji dokującej
+        :param d_max: zasięg działania stacji dokujących
         :param clients_map: macierz zawierająca informacje o położeniu klientów
         """
         self.__p_max = p_max
@@ -61,8 +61,8 @@ class OneConditionTester(ConditionTesterInterface):
 
     def __create_ban_matrix(self) -> np.array:
         """
-        Tworzy macierz logiczną, gdzie True oznacza miejsca, gdzie nie można postawić paczkomatu
-        :return ban_matrix: macierz wskazująca gdzie nie można postawić paczkomatów
+        Tworzy macierz logiczną, gdzie True oznacza miejsca, gdzie nie można postawić stacji dokujących
+        :return ban_matrix: macierz wskazująca gdzie nie można postawić stacji dokujących
         """
         ban_matrix = np.zeros(self.__map_shape, dtype=bool)
         for index, value in np.ndenumerate(ban_matrix):
@@ -71,11 +71,11 @@ class OneConditionTester(ConditionTesterInterface):
 
     def __are_to_many_clients_in_area(self, pl_coords: Tuple[int, int]) -> bool:
         """
-        FUnkcja sprawdzająca, czy w zasięgu działa paczkomatu o współrzędnych pl_coords
+        FUnkcja sprawdzająca, czy w zasięgu działa stacji dokujących o współrzędnych pl_coords
         nie ma zbyt wielu klientów.
 
-        :param pl_coords: współrzędne paczkomatu
-        :return [bool]: czy w zasięgu paczkomatu nie ma zbyt wielu klientów
+        :param pl_coords: współrzędne stacji dokujących
+        :return [bool]: czy w zasięgu stacji dokujących nie ma zbyt wielu klientów
         """
 
         y, x = pl_coords

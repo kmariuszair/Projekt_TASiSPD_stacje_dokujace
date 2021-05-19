@@ -72,7 +72,7 @@ def run_algorithm(path_to_settings=None):
     # Sprawdzanie wariancji uzyskanych wyników
     solution_grader = SolutionGrader.SolutionGrader(traffic_map, solution)
     solution_res = solution_grader.grade_solution(traffic_map, solution)
-    # Wyznacz mapę wykorzystania paczkomatów
+    # Wyznacz mapę wykorzystania stacji dokujących
     solution_util = SolutionUtilization.SolutionUtilization(traffic_map, solution, p_max, d_max)
     # Pokaż i zapis do pliku wykresy uzyskanego rozwiązania
     solution_util.plot_solution_utilization()
