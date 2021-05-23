@@ -154,8 +154,8 @@ class TestTrafficMapGenerator(unittest.TestCase):
             self.assertFalse(np.all(direction == np.array([-1, -1])))
 
     def test_TrafficMapGenerator__direction_to_nearest_dock(self):
-        traffic_map_generator = TrafficMapGenerator(allowed_positions_map, docking_stations_map, 3)
         for _ in range(100):
+            traffic_map_generator = TrafficMapGenerator(allowed_positions_map, docking_stations_map, 3)
             for robot in traffic_map_generator._TrafficMapGenerator__robots_swarm:
                 robot_id = robot.get_id()
                 robot_pos = robot.get_actual_position()
