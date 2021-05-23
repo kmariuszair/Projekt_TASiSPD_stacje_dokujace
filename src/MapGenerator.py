@@ -17,9 +17,9 @@ def generate_random_settings(settings_number: int, allowed_positions_map: np.arr
     :allowed_positions_map: mapa pozycji dozwolonych --- 0 oznacza brak bariery, 1 oznacza barierę
     """
     for id in range(settings_number):
-        battery_size = np.random.randint(101, 200)  # 101, bo battery_size musi byś większe od minimum z starting_battery_level
-        starting_battery_level = np.random.randint(100, battery_size)
-        max_load = np.random.randint(5, 20)
+        battery_size = np.random.randint(501, 1000)  # 501, bo battery_size musi byś większe od minimum z starting_battery_level
+        starting_battery_level = np.random.randint(np.floor(0.5*battery_size), battery_size)
+        max_load = np.random.randint(25, 50)
         x0, y0 = np.random.randint(0, allowed_positions_map.shape[0]), np.random.randint(0, allowed_positions_map.shape[1])
         while allowed_positions_map[x0, y0] == 1:  # dopóki trafiamy w przeszkodę
             x0, y0 = np.random.randint(0, allowed_positions_map.shape[0]), np.random.randint(0,
@@ -37,7 +37,8 @@ def generate_swarm(robots_number: int, allowed_positions_map: np.array,
     :allowed_positions_map: mapa dozwolonych pozycji
     :settings_list: lista ustawień robotów (opcjonalna - gdy nie podana ustawienia są losowe)
     """
-    if settings_list is None: settings_list = []
+    if settings_list is None:
+        settings_list = []
     robots_list = []
     if len(settings_list) == 0:
         # jeśli niezdefiniowano wcześniej listy ustawień to losuj ustawienia
@@ -53,7 +54,8 @@ class RobotsSwarm:
 
     def __init__(self, robots_number: int, allowed_positions_map: np.array,
                  predefined_settings: List[RobotModel.RobotSettings] = None):
-        if predefined_settings is None: predefined_settings = []
+        if predefined_settings is None:
+            predefined_settings = []
         self.robots_list = generate_swarm(robots_number, allowed_positions_map, settings_list=predefined_settings)
         self.iter_count = 0
 

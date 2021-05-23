@@ -48,7 +48,8 @@ class RobotState:
 
             self.actual_load += new_load
 
-            if self.battery_level < 0.15 * self.battery_size:
+            # niski stan baterii osiągany dla 30%
+            if self.battery_level < 0.4 * self.battery_size:
                 self.battery_low = True
 
             self.actual_position += direction
@@ -66,6 +67,7 @@ class RobotState:
             self.actual_position += direction
             self.is_loading = True if loading_speed > 0 and self.battery_level < self.battery_size else False
 
+        # jeśli za bardzo obciążymy robota lub rozładujemy baterię do końca to robot wchodzi w stan usterki
         if self.battery_level <= 0 or self.actual_load > self.max_load:
             self.failure = True
 

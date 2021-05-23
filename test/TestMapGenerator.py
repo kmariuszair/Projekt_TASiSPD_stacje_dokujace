@@ -68,9 +68,9 @@ class TestFunctions(unittest.TestCase):
         settings_list = list()
         for _ in range(100):
             for setting in generate_random_settings(3, allowed_positions_map):
-                self.assertTrue(100 <= setting.battery_size < 200)
-                self.assertTrue(100 <= setting.starting_battery_level < setting.battery_size)
-                self.assertTrue(5 <= setting.max_load < 20)
+                self.assertTrue(501 <= setting.battery_size < 1000)
+                self.assertTrue(np.floor(0.5*setting.battery_size) <= setting.starting_battery_level < setting.battery_size)
+                self.assertTrue(25 <= setting.max_load < 50)
                 self.assertTrue(allowed_positions_map[setting.starting_position[0], setting.starting_position[1]]==0)  # 0 oznacza pozycję dozwoloną
                 settings_list.append(setting)
 
@@ -78,9 +78,9 @@ class TestFunctions(unittest.TestCase):
         swarm = generate_swarm(100, allowed_positions_map)
 
         for robot in swarm:
-            self.assertTrue(100 <= robot._Robot__settings.battery_size < 200)
-            self.assertTrue(100 <= robot._Robot__settings.starting_battery_level < robot._Robot__settings.battery_size)
-            self.assertTrue(5 <= robot._Robot__settings.max_load < 20)
+            self.assertTrue(501 <= robot._Robot__settings.battery_size < 1000)
+            self.assertTrue(np.floor(0.5*robot._Robot__settings.battery_size) <= robot._Robot__settings.starting_battery_level < robot._Robot__settings.battery_size)
+            self.assertTrue(25 <= robot._Robot__settings.max_load < 50)
             self.assertTrue(allowed_positions_map[robot._Robot__settings.starting_position[0],
                                                   robot._Robot__settings.starting_position[1]] == 0)  # 0 oznacza pozycję dozwoloną
 
@@ -101,9 +101,9 @@ class TestRobotsSwarm(unittest.TestCase):
     def test_init(self):
         robot_swarm = RobotsSwarm(3, allowed_positions_map)
         for robot in robot_swarm.robots_list:
-            self.assertTrue(100 <= robot._Robot__settings.battery_size < 200)
-            self.assertTrue(100 <= robot._Robot__settings.starting_battery_level < robot._Robot__settings.battery_size)
-            self.assertTrue(5 <= robot._Robot__settings.max_load < 20)
+            self.assertTrue(501 <= robot._Robot__settings.battery_size < 1000)
+            self.assertTrue(np.floor(0.5*robot._Robot__settings.battery_size) <= robot._Robot__settings.starting_battery_level < robot._Robot__settings.battery_size)
+            self.assertTrue(25 <= robot._Robot__settings.max_load < 50)
             self.assertTrue(allowed_positions_map[
                                 robot._Robot__settings.starting_position[0], robot._Robot__settings.starting_position[
                                     1]] == 0)  # 0 oznacza pozycję dozwoloną
@@ -122,9 +122,9 @@ class TestRobotsSwarm(unittest.TestCase):
     def test_iteration(self):
         robot_swarm = RobotsSwarm(3, allowed_positions_map)
         for robot in robot_swarm:
-            self.assertTrue(100 <= robot._Robot__settings.battery_size < 200)
-            self.assertTrue(100 <= robot._Robot__settings.starting_battery_level < robot._Robot__settings.battery_size)
-            self.assertTrue(5 <= robot._Robot__settings.max_load < 20)
+            self.assertTrue(501 <= robot._Robot__settings.battery_size < 1000)
+            self.assertTrue(np.floor(0.5*robot._Robot__settings.battery_size) <= robot._Robot__settings.starting_battery_level < robot._Robot__settings.battery_size)
+            self.assertTrue(25 <= robot._Robot__settings.max_load < 50)
             self.assertTrue(allowed_positions_map[
                                 robot._Robot__settings.starting_position[0], robot._Robot__settings.starting_position[
                                     1]] == 0)  # 0 oznacza pozycję dozwoloną
@@ -172,12 +172,12 @@ class TestTrafficMapGenerator(unittest.TestCase):
                 self.assertIsNotNone(traffic_map_generator._TrafficMapGenerator__paths_to_docks[robot_id])
 
     def test_generate_map(self):
-        for _ in range(100):
+        for _ in range(10):
             traffic_map_generator = TrafficMapGenerator(allowed_positions_map, docking_stations_map, 3)
-            traffic_map, _, _ = traffic_map_generator.generate_map(1000)
+            traffic_map, loading_map, failure_map = traffic_map_generator.generate_map(10000)
             self.assertEqual(np.sum(traffic_map[allowed_positions_map==1]), 0)
 
     def test_generate_reasonable_size(self):
         traffic_map_generator = TrafficMapGenerator(allowed_positions_map, docking_stations_map, 20)
-        traffic_map, _, failure_map = traffic_map_generator.generate_map(1000)
+        traffic_map, loading_map, failure_map = traffic_map_generator.generate_map(10000)
         self.assertEqual(np.sum(traffic_map[allowed_positions_map == 1]), 0)
