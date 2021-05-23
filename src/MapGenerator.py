@@ -21,7 +21,7 @@ def generate_random_settings(settings_number: int, allowed_positions_map: np.arr
         starting_battery_level = np.random.randint(100, battery_size)
         max_load = np.random.randint(5, 20)
         x0, y0 = np.random.randint(0, allowed_positions_map.shape[0]), np.random.randint(0, allowed_positions_map.shape[1])
-        while allowed_positions_map[x0, y0] != 1:
+        while allowed_positions_map[x0, y0] == 1:  # dopóki trafiamy w przeszkodę
             x0, y0 = np.random.randint(0, allowed_positions_map.shape[0]), np.random.randint(0,
                                                                                          allowed_positions_map.shape[1])
         starting_position = np.array([x0, y0])
@@ -121,7 +121,7 @@ class TrafficMapGenerator:
                             del self.__paths_to_docks[robot.get_id()]
                         else:
                             r_pos = robot.get_actual_position()
-                            direction = self.__goto_nearest_dock(robot.get_id(), r_pos)
+                            direction = self.__direction_to_nearest_dock(robot.get_id(), r_pos)
                             robot.make_move(direction, 0, 0)
                             traffic_map[r_pos[0], r_pos[1]] += 1
                     else:  # jeśli robot jest sprawny
@@ -138,14 +138,18 @@ class TrafficMapGenerator:
             random_move = np.random.randint(-1, 2, 2)
         return random_move
 
-    def __goto_nearest_dock(self, robot_id: int, robot_position: np.array):
+    def __direction_to_nearest_dock(self, robot_id: int, robot_position: np.array):
         if robot_id not in self.__paths_to_docks.keys():
-            self.__paths_to_docks[robot_id] = self.__bfs(robot_position)
+            # odwrotna indeksacja, najpierw podany numer kolumny a potem wiersza, wartości też zwracane w odwrotnej indeksacji
+            self.__paths_to_docks[robot_id] = self.__bfs((robot_position[1], robot_position[0]))
 
         path = self.__paths_to_docks[robot_id]
-        next_point = path.pop(0)
-        xdiff, ydiff = robot_position[0] - next_point[1], robot_position[1] - next_point[0]
-        return np.array([xdiff, ydiff])
+        try:
+            next_point = path.pop(0)  # może się zdarzyć 'pop from empty list', gdy robot będzie już na miejscu stacji dokującej
+            xdiff, ydiff = robot_position[0] - next_point[1], robot_position[1] - next_point[0]  # coś nie tak
+            return np.array([xdiff, ydiff])
+        except IndexError:
+            return np.array([0, 0])
 
     def __bfs(self, start):
         """
@@ -159,7 +163,8 @@ class TrafficMapGenerator:
         width = grid.shape[1]
         height = grid.shape[0]
         queue = collections.deque([[start]])
-        seen = set([start])
+        start = (start[0], start[1])
+        seen = set(tuple([start]))
         while queue:
             path = queue.popleft()
             x, y = path[-1]

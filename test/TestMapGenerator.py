@@ -5,31 +5,31 @@ from src.MapGenerator import generate_random_settings, generate_swarm, RobotsSwa
 
 
 allowed_positions_map = np.array([
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ])
 
 docking_stations_map = np.array([
@@ -71,7 +71,7 @@ class TestFunctions(unittest.TestCase):
                 self.assertTrue(100 <= setting.battery_size < 200)
                 self.assertTrue(100 <= setting.starting_battery_level < setting.battery_size)
                 self.assertTrue(5 <= setting.max_load < 20)
-                self.assertTrue(allowed_positions_map[setting.starting_position[0], setting.starting_position[1]]==1)
+                self.assertTrue(allowed_positions_map[setting.starting_position[0], setting.starting_position[1]]==0)  # 0 oznacza pozycję dozwoloną
                 settings_list.append(setting)
 
     def test_generate_swarm__random(self):
@@ -81,7 +81,8 @@ class TestFunctions(unittest.TestCase):
             self.assertTrue(100 <= robot._Robot__settings.battery_size < 200)
             self.assertTrue(100 <= robot._Robot__settings.starting_battery_level < robot._Robot__settings.battery_size)
             self.assertTrue(5 <= robot._Robot__settings.max_load < 20)
-            self.assertTrue(allowed_positions_map[robot._Robot__settings.starting_position[0], robot._Robot__settings.starting_position[1]] == 1)
+            self.assertTrue(allowed_positions_map[robot._Robot__settings.starting_position[0],
+                                                  robot._Robot__settings.starting_position[1]] == 0)  # 0 oznacza pozycję dozwoloną
 
     def test_generate_swarm__given_settings_list(self):
         settings_list = list()
@@ -105,7 +106,7 @@ class TestRobotsSwarm(unittest.TestCase):
             self.assertTrue(5 <= robot._Robot__settings.max_load < 20)
             self.assertTrue(allowed_positions_map[
                                 robot._Robot__settings.starting_position[0], robot._Robot__settings.starting_position[
-                                    1]] == 1)
+                                    1]] == 0)  # 0 oznacza pozycję dozwoloną
 
     def test_init_given_settings(self):
         settings_list = list()
@@ -126,7 +127,7 @@ class TestRobotsSwarm(unittest.TestCase):
             self.assertTrue(5 <= robot._Robot__settings.max_load < 20)
             self.assertTrue(allowed_positions_map[
                                 robot._Robot__settings.starting_position[0], robot._Robot__settings.starting_position[
-                                    1]] == 1)
+                                    1]] == 0)  # 0 oznacza pozycję dozwoloną
 
 
 class TestTrafficMapGenerator(unittest.TestCase):
@@ -152,8 +153,23 @@ class TestTrafficMapGenerator(unittest.TestCase):
             direction = traffic_map_generator._TrafficMapGenerator__generate_allowed_move((1, 1))
             self.assertFalse(np.all(direction == np.array([-1, -1])))
 
-    def test_TrafficMapGenerator__goto_nearest_dock(self):
-        pass
+    def test_TrafficMapGenerator__direction_to_nearest_dock(self):
+        traffic_map_generator = TrafficMapGenerator(allowed_positions_map, docking_stations_map, 3)
+        for _ in range(100):
+            for robot in traffic_map_generator._TrafficMapGenerator__robots_swarm:
+                robot_id = robot.get_id()
+                robot_pos = robot.get_actual_position()
+                direction = traffic_map_generator._TrafficMapGenerator__direction_to_nearest_dock(robot_id, robot_pos)
+
+                # sprawdzam czy kierunek jest w zakresie iloczynu kartezjańskiego zbiorów <-1, 1>X<-1, 1>
+                self.assertGreaterEqual(direction[0], -1)
+                self.assertLessEqual(direction[0], 1)
+
+                self.assertGreaterEqual(direction[1], -1)
+                self.assertLessEqual(direction[1], 1)
+
+                # sprawdzam, czy wygenerowała się lista punktów reprezentująca drogę do najbliższej stacji dokującej
+                self.assertIsNotNone(traffic_map_generator._TrafficMapGenerator__paths_to_docks[robot_id])
 
     def test_generate_map(self):
         pass
