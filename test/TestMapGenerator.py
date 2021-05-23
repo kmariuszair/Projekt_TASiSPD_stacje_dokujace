@@ -146,7 +146,7 @@ class TestTrafficMapGenerator(unittest.TestCase):
                                                     robots_swarm_predefined_settings=robots_settings_list)
 
     def test_TrafficMapGenerator__generate_allowed_move(self):
-        small_pos_map = np.array([[0, 0, 0], [0, 0, 0], [1, 0, 0]])
+        small_pos_map = np.array([[1, 1, 1], [1, 0, 1], [0, 1, 1]])
         small_docs_map = np.array([[1, 0, 0], [0, 0, 0], [0, 0, 1]])
         traffic_map_generator = TrafficMapGenerator(small_pos_map, small_docs_map, 3)
         for _ in range(100):
@@ -172,4 +172,7 @@ class TestTrafficMapGenerator(unittest.TestCase):
                 self.assertIsNotNone(traffic_map_generator._TrafficMapGenerator__paths_to_docks[robot_id])
 
     def test_generate_map(self):
-        pass
+        for _ in range(100):
+            traffic_map_generator = TrafficMapGenerator(allowed_positions_map, docking_stations_map, 3)
+            traffic_map = traffic_map_generator.generate_map(10)
+            self.assertEqual(np.sum(traffic_map[allowed_positions_map==1]), 0)

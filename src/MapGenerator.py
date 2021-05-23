@@ -133,9 +133,23 @@ class TrafficMapGenerator:
         return traffic_map
 
     def __generate_allowed_move(self, actual_position):
-        random_move = np.random.randint(-1,2, 2)
-        while self.__allowed_positions[actual_position[0]+random_move[0]][actual_position[1]+random_move[1]] != 1:
+        vmax = self.__allowed_positions.shape[0]
+        hmax = self.__allowed_positions.shape[1]
+        random_move = np.random.randint(-1, 2, 2)
+        new_v = actual_position[0] + random_move[0]
+        new_h = actual_position[1] + random_move[1]
+        while not (0 <= new_v < vmax and 0 <= new_h < hmax):
             random_move = np.random.randint(-1, 2, 2)
+            new_v = actual_position[0] + random_move[0]
+            new_h = actual_position[1] + random_move[1]
+        while self.__allowed_positions[actual_position[0]+random_move[0]][actual_position[1]+random_move[1]] == 1:
+            random_move = np.random.randint(-1, 2, 2)
+            new_v = actual_position[0] + random_move[0]
+            new_h = actual_position[1] + random_move[1]
+            while not (0 <= new_v < vmax and 0 <= new_h < hmax):
+                random_move = np.random.randint(-1, 2, 2)
+                new_v = actual_position[0] + random_move[0]
+                new_h = actual_position[1] + random_move[1]
         return random_move
 
     def __direction_to_nearest_dock(self, robot_id: int, robot_position: np.array):
