@@ -52,6 +52,10 @@ class RobotState:
                 self.battery_low = True
 
             self.actual_position += direction
+        elif self.is_loading:
+            self.is_loading = True if loading_speed > 0 and self.battery_level < self.battery_size else False
+            self.battery_low = False if not self.is_loading else True
+            self.battery_level += loading_speed
         else:
             """
             Robot w stanie niskiego poziomu baterii
@@ -60,6 +64,7 @@ class RobotState:
             # na wyższym poziomie, ponieważ potrzebny jest dostęp do mapy
             self.battery_level -= self.actual_load
             self.actual_position += direction
+            self.is_loading = True if loading_speed > 0 and self.battery_level < self.battery_size else False
 
         if self.battery_level <= 0 or self.actual_load > self.max_load:
             self.failure = True

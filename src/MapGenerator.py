@@ -103,7 +103,13 @@ class TrafficMapGenerator:
 
         :sim_len: długość symulacji w iteracjach
         """
+        # mapa pokazująca, gdzie jest duy ruch robotów
         traffic_map = np.zeros(self.__docking_stations_map.shape)
+        # mapa pokazująca, gdzie zazwyczaj znajdują się roboty z niskim poziomem baterii
+        loading_map = np.zeros(self.__docking_stations_map.shape)
+        # mapa pokazująca, gdzie ewentualnie znajdują się popsute roboty
+        failure_map = np.zeros(self.__docking_stations_map.shape)
+
         for _ in range(sim_len):  # powtarza kroki symulacji tak długo, jak zadano
             for robot in self.__robots_swarm:  # aktualizacja stanu dla każdego robota
                 if robot.failure_detected():  # jeśli robot ma usterkę, to jest pomijany
@@ -114,23 +120,31 @@ class TrafficMapGenerator:
                 else:  # jeśli robot jest w stanie normalnej pracy
                     if robot.battery_low():  # jeśli robot ma mało baterii
                         r_pos = robot.get_actual_position()
-                        if self.__docking_stations_map[r_pos[0]][r_pos[1]] > 0:
+                        if self.__docking_stations_map[r_pos[0]][r_pos[1]] > 0: # jeśli robot przyjechał do stacji dokującej
                             robot.make_move(np.array([0, 0]), 0, self.__docking_stations_map[r_pos[0]][r_pos[1]])
                             # usuwa tymczasowo wygenerowaną ścieżkę do najbliższej stacji dokującej
-                            # powinna zostać usunieta pusta lista
-                            del self.__paths_to_docks[robot.get_id()]
-                        else:
+                            # powinna zostać usunięta pusta lista
+                            if robot.get_id() in self.__paths_to_docks.keys():
+                                del self.__paths_to_docks[robot.get_id()]
+                        else:  # jeśli robot ma mało baterii i musi jechać do stacji dokującej
                             r_pos = robot.get_actual_position()
                             direction = self.__direction_to_nearest_dock(robot.get_id(), r_pos)
                             robot.make_move(direction, 0, 0)
                             traffic_map[r_pos[0], r_pos[1]] += 1
+                            loading_map[r_pos[0], r_pos[1]] += 1
                     else:  # jeśli robot jest sprawny
                         r_pos = robot.get_actual_position()
                         direction = self.__generate_allowed_move(r_pos)
-                        random_load = np.random.randint(-5, 5)
+                        random_load = np.random.randint(-1, 2)
                         robot.make_move(direction, random_load, 0)
                         traffic_map[r_pos[0], r_pos[1]] += 1
-        return traffic_map
+
+        for robot in self.__robots_swarm:
+            if robot.failure_detected():
+                r_pos = robot.get_actual_position()
+                failure_map[r_pos[0], r_pos[1]] += 1
+
+        return traffic_map, loading_map, failure_map
 
     def __generate_allowed_move(self, actual_position):
         vmax = self.__allowed_positions.shape[0]
@@ -160,7 +174,7 @@ class TrafficMapGenerator:
         path = self.__paths_to_docks[robot_id]
         try:
             next_point = path.pop(0)  # może się zdarzyć 'pop from empty list', gdy robot będzie już na miejscu stacji dokującej
-            xdiff, ydiff = robot_position[0] - next_point[1], robot_position[1] - next_point[0]  # coś nie tak
+            xdiff, ydiff = next_point[1] - robot_position[0], next_point[0] - robot_position[1]  # coś nie tak
             return np.array([xdiff, ydiff])
         except IndexError:
             return np.array([0, 0])

@@ -174,5 +174,10 @@ class TestTrafficMapGenerator(unittest.TestCase):
     def test_generate_map(self):
         for _ in range(100):
             traffic_map_generator = TrafficMapGenerator(allowed_positions_map, docking_stations_map, 3)
-            traffic_map = traffic_map_generator.generate_map(10)
+            traffic_map, _, _ = traffic_map_generator.generate_map(1000)
             self.assertEqual(np.sum(traffic_map[allowed_positions_map==1]), 0)
+
+    def test_generate_reasonable_size(self):
+        traffic_map_generator = TrafficMapGenerator(allowed_positions_map, docking_stations_map, 20)
+        traffic_map, _, failure_map = traffic_map_generator.generate_map(1000)
+        self.assertEqual(np.sum(traffic_map[allowed_positions_map == 1]), 0)
