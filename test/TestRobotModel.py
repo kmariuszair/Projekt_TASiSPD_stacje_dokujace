@@ -67,3 +67,7 @@ class TestRobotState(unittest.TestCase):
 
 class TestRobot(unittest.TestCase):
     pass
+
+
+if __name__ == "__main__":
+    unittest.main()

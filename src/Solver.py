@@ -111,7 +111,8 @@ class Solver:
 
                  telemetry_on: bool = False,
 
-                 starting_solution: np.array = None):
+                 starting_solution: np.array = None,
+                 banned_positions: np.array = None):
         """
         Inicjalizacja atrybutów klasy. Atrybuty te są konieczne do rozwiązania problemu.
         Wstępnie inicjalizuje zmienne, które będą potrzebne na dalszym etapie rozwiązywania problemu.
@@ -128,6 +129,7 @@ class Solver:
         :param telemetry_on: czy rejestrować telemetrię
         :param starting_solution: zadane rozwiązanie startowe, możemy wykorzystać ten parametr, gdy korzystamy z
                                   innego niż standardowego generatora rozwiązania początkowego
+        :param banned_positions: mapa pozycji zabronionych, na których nie można postawić stacji dokujących
         """
 
         # Atrybuty związane z parametrami problemu
@@ -139,10 +141,12 @@ class Solver:
         self.__min_time_in_tl = min_time_in_tl
         self.__min_time_in_lt_tl = min_time_in_lt_tl
         self.__client_map = np.copy(client_map)
+        self.__banned_positions = banned_positions
 
         self.__condition_tester = ConditionTester.OneConditionTester(p_max=self.__p_max,
                                                                      d_max=self.__d_max,
-                                                                     clients_map=self.__client_map)
+                                                                     clients_map=self.__client_map,
+                                                                     banned_positions=self.__banned_positions)
 
         self.__record_and_plot_data = record_and_plot_data
 
@@ -361,8 +365,12 @@ class Solver:
         :return []: rozwiązanie początkowe
         """
         if not (self.__starting_solution is None):
+            if self.__record_and_plot_data:
+                logging.info("Używam zadanego rozwiązania początkowego")
             return self.__starting_solution
         else:
+            if self.__record_and_plot_data:
+                logging.info("Generuję automatycznie możliwie najlepsze rozwiązanie początkowe")
             return self.__default_starting_sol_gen.generate()
 
     def __cost(self, x_new: np.array) -> int:

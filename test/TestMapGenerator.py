@@ -181,3 +181,6 @@ class TestTrafficMapGenerator(unittest.TestCase):
         traffic_map_generator = TrafficMapGenerator(allowed_positions_map, docking_stations_map, 20)
         traffic_map, loading_map, failure_map = traffic_map_generator.generate_map(10000)
         self.assertEqual(np.sum(traffic_map[allowed_positions_map == 1]), 0)
+
+if __name__ == "__main__":
+    unittest.main()

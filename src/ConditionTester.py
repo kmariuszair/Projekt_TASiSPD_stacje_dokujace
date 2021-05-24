@@ -33,15 +33,18 @@ class OneConditionTester(ConditionTesterInterface):
                  p_max: int,
                  d_max: int,
 
-                 clients_map: np.array):
+                 clients_map: np.array,
+                 banned_positions: np.array):
         """
         :param p_max: maksymalna liczba klientów w zasięgu działania stacji dokującej
         :param d_max: zasięg działania stacji dokujących
         :param clients_map: macierz zawierająca informacje o położeniu klientów
+        :param banned_positions: mapa pozycji zabronionych
         """
         self.__p_max = p_max
         self.__d_max = d_max
         self.__clients_map = clients_map
+        self.__banned_positions = banned_positions == 1
 
         self.__map_shape = self.__clients_map.shape
 
@@ -57,7 +60,7 @@ class OneConditionTester(ConditionTesterInterface):
         :return [bool]: odpowiedź na pytanie, czy dane rozwiązanie spełnia ograniczenia
         """
 
-        return not np.any(solution[self.__ban_matrix])
+        return (not np.any(solution[self.__ban_matrix])) or (not np.any(solution[self.__banned_positions]))
 
     def __create_ban_matrix(self) -> np.array:
         """
