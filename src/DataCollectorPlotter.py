@@ -481,3 +481,25 @@ def generate_plot_of_telemetry(telemetry_data: Dict):
     save_plot_to_file(plt, 'telemetria')
     plt.show()
 
+def plot_map_barriers(_barrier_map:np.array):
+    """
+        Funkcja do wyswietalnia mapy barier ograniczajacej ruch robotow.
+        Bariery rozumiemiemy jako pola bez mozliwosci ruchu robotów.
+    """
+    fig = plt.figure(figsize=(16, 12))
+    ax = fig.add_subplot(111)
+    im = ax.imshow(_barrier_map, origin='lower', interpolation='None', cmap='Purples')
+    plt.xlabel('Pozycja osi Y')
+    plt.ylabel('Pozycja osi X')
+    plt.title('Mapa rozmieszczenia barrier')
+    size = _barrier_map.shape
+    # for (j, i), label in np.ndenumerate(_barrier_map):
+    #     ax.text(j, i, label, ha='center', va='center')
+    plt.xticks(range(0, size[1]))
+    plt.yticks(range(0, size[0]))
+    fig.colorbar(im)
+    save_plot_to_file(plt, 'barrier_map')
+    plt.show()
+
+def plot_robots_movements():
+    pass
