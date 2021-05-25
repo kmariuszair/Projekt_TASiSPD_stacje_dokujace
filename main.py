@@ -76,6 +76,7 @@ def run_algorithm(path_to_settings=None):
     solution_util = SolutionUtilization.SolutionUtilization(traffic_map.astype('int32'), solution.astype('int32'), p_max, d_max)
     # Wyznacz mape przemieszczen symulacyjnych robotow z optymalna pozycja stacji dokujacych
     DataCollectorPlotter.plot_robots_movements_with_doc_station(robot_pos_sim, barriers_map, solution)
+    DataCollectorPlotter.dinozaur_pimpus.robot_animation(robot_pos_sim, barriers_map, solution)
 
     # Pokaż i zapis do pliku wykresy uzyskanego rozwiązania
     solution_util.plot_solution_utilization()
