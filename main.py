@@ -55,7 +55,7 @@ def run_algorithm(path_to_settings=None):
 
     DataCollectorPlotter.plot_client_map(traffic_map.astype('int32'), int(np.max(traffic_map) + 1))
     logging.info("Inicjalizuję solwer")
-    solver = src.Solver.Solver(n_max,
+    solver = src.Solver.Solver(np.sum((docking_stations_map>0).astype('int32')),
                                p_max,
                                d_max,
                                r,
@@ -64,7 +64,8 @@ def run_algorithm(path_to_settings=None):
                                traffic_map,
                                iteration_lim=iteration_lim,
                                dynamic_neighborhood=dynamic_neighborhood,
-                               starting_solution=docking_stations_map)
+                               starting_solution=docking_stations_map,
+                               banned_positions=barriers_map)
     # ustawiamy limit iteracji, ewentualnie można ustawić limit czasu
     logging.info("Rozpoczynam rozwiązywanie problemu")
     solution = solver.solve(record_and_plot_data=True, telemetry_on=True)
