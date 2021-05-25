@@ -5,6 +5,7 @@ from matplotlib import animation
 from typing import Dict
 from src.SettingMenager import setting_menager
 from src.PlotSaver import save_plot_to_file, save_anim_to_file
+from copy import copy
 """
     Funkcja służaca do reprezentacji graficznej macierzy klientów 
     !!!   UWAGA   !!!
@@ -481,6 +482,7 @@ def generate_plot_of_telemetry(telemetry_data: Dict):
     save_plot_to_file(plt, 'telemetria')
     plt.show()
 
+
 def plot_map_barriers(_barrier_map:np.array):
     """
         Funkcja do wyswietalnia mapy barier ograniczajacej ruch robotow.
@@ -493,13 +495,72 @@ def plot_map_barriers(_barrier_map:np.array):
     plt.ylabel('Pozycja osi X')
     plt.title('Mapa rozmieszczenia barrier')
     size = _barrier_map.shape
-    # for (j, i), label in np.ndenumerate(_barrier_map):
-    #     ax.text(j, i, label, ha='center', va='center')
     plt.xticks(range(0, size[1]))
     plt.yticks(range(0, size[0]))
     fig.colorbar(im)
     save_plot_to_file(plt, 'barrier_map')
     plt.show()
 
-def plot_robots_movements():
-    pass
+
+def _plot_robots_movements(_robot_mov_list: list, _barrier_map: np.array, doc_station_map: np.array = None, plot_name:str = 'przemieszczenie_robotow'):
+    """
+    Funkcja służąca do wygenerowania mapy wszystkich ruchów jakie miały miejsce podczas przeprowadzania symulacji
+    Istnieje opcjoinalny parametr do naniesienia pozycji stacji dokujących
+    :return:
+    """
+    barrier_map = copy(_barrier_map)
+
+    x_size = _barrier_map.shape[1]
+    y_size = _barrier_map.shape[0]
+    fig, ax = plt.subplots()
+    # Wyswietlanie mapy barrier
+    im = plt.imshow(_barrier_map, origin='lower', interpolation='None', cmap='plasma')
+
+    __iteration_count = len(_robot_mov_list)
+    # Petla iterujaca po poszczegolnych etapach symulacji
+    for itr in range(1, __iteration_count):
+        curr_mov = _robot_mov_list[itr]
+        prev_mov = _robot_mov_list[itr - 1]
+        # petla po poszczegolnych robotach
+        for current_robot in curr_mov:
+            id = current_robot[0]
+            pos_arrow_head = current_robot[1]
+            x_arrow_head = pos_arrow_head[1]
+            y_arrow_head = pos_arrow_head[0]
+            # Znajdz poorzednia pozycje danego robota
+            prev_robot = [x for x in prev_mov if x[0] == id]
+            pos_arrow_begin = prev_robot[0][1]
+            x_arrow_begin = pos_arrow_begin[1]
+            y_arrow_begin = pos_arrow_begin[0]
+            dx = x_arrow_head - x_arrow_begin
+            dy = y_arrow_head - y_arrow_begin
+            ax.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops=dict(arrowstyle="->"))
+            plt.arrow(x_arrow_begin, y_arrow_begin, dx, dy, color='white', width=0.005,
+                      length_includes_head=True, head_width=0.1, head_length=0.15)
+            plt.scatter(x_arrow_begin, y_arrow_begin, facecolors='none', edgecolors='white')
+
+    # Zaznaczenie finalnej pozycji stacji dokujących
+    if doc_station_map is not None:
+        for x in range(0, x_size):
+            for y in range(0, y_size):
+                if doc_station_map[x][y] != 0:
+                    plt.plot(x, y, 'ro')
+
+    plt.xlabel('Pozycja osi Y')
+    plt.ylabel('Pozycja osi X')
+    title = 'Mapa przemieszczen robotow podczas działania algorytmu'
+    plt.title(title)
+    plt.colorbar(im)
+    save_plot_to_file(plt, plot_name)
+    plt.show()
+
+
+def plot_robots_movements(_robot_mov_list: list, _barrier_map: np.array):
+    # Wywołaj dedykowaną do funkcje
+    _plot_robots_movements(_robot_mov_list, _barrier_map)
+
+
+def plot_robots_movements_with_doc_station(_robot_mov_list: list, _barrier_map: np.array, doc_station_map: np.array):
+    # Wywołaj dedykowaną do funkcje
+    _plot_robots_movements(_robot_mov_list, _barrier_map, doc_station_map, 'Przemiszczenie_robotow_ze_stacjami_dokujacymi')
+

@@ -46,10 +46,11 @@ def run_algorithm(path_to_settings=None):
 
     robots_simulation = MapGenerator.TrafficMapGenerator(barriers_map, docking_stations_map, robots_number)
 
-    traffic_map, _, _ = robots_simulation.generate_map(sim_time)
+    traffic_map, _, _, robot_pos_sim = robots_simulation.generate_map(sim_time)
+
     # Wizualizacja mapy rozmieszczenia barrier oraz trajektorii ruchu robotów
     DataCollectorPlotter.plot_map_barriers(barriers_map)
-
+    DataCollectorPlotter.plot_robots_movements(robot_pos_sim, barriers_map)
 
     DataCollectorPlotter.plot_client_map(traffic_map.astype('int32'), int(np.max(traffic_map) + 1))
     logging.info("Inicjalizuję solwer")
@@ -71,6 +72,8 @@ def run_algorithm(path_to_settings=None):
     solution_res = solution_grader.grade_solution(traffic_map, solution)
     # Wyznacz mapę wykorzystania stacji dokujących
     solution_util = SolutionUtilization.SolutionUtilization(traffic_map.astype('int32'), solution.astype('int32'), p_max, d_max)
+    # Wyznacz mape przemieszczen symulacyjnych robotow z optymalna pozycja stacji dokujacych
+    DataCollectorPlotter.plot_robots_movements_with_doc_station(robot_pos_sim, barriers_map, solution)
     # Pokaż i zapis do pliku wykresy uzyskanego rozwiązania
     solution_util.plot_solution_utilization()
     solution_util.plot_clients_within_plt_zone()

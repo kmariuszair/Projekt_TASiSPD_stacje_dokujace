@@ -4,7 +4,7 @@ Generator mapy do znalezienia optymalnego rozmieszczenia stacji dokujących za p
 from typing import List
 import collections
 import numpy as np
-
+from copy import deepcopy
 
 import src.RobotModel as RobotModel
 
@@ -111,8 +111,12 @@ class TrafficMapGenerator:
         loading_map = np.zeros(self.__docking_stations_map.shape)
         # mapa pokazująca, gdzie ewentualnie znajdują się popsute roboty
         failure_map = np.zeros(self.__docking_stations_map.shape)
+        # lista pozycji poszczegolnych robotow w danej iteracji symulajci
+        # Poszczegole pole listy zaweira liste pozycji robotow w danej iteracji
+        robot_position_during_simulation_list = []
 
         for _ in range(sim_len):  # powtarza kroki symulacji tak długo, jak zadano
+            robot_pos_sim_itr = []
             for robot in self.__robots_swarm:  # aktualizacja stanu dla każdego robota
                 if robot.failure_detected():  # jeśli robot ma usterkę, to jest pomijany
                     continue                  # (nie zakładamy możliwości naprawy w czasie symulacji)
@@ -140,13 +144,20 @@ class TrafficMapGenerator:
                         random_load = np.random.randint(-1, 2)
                         robot.make_move(direction, random_load, 0)
                         traffic_map[r_pos[0], r_pos[1]] += 1
+                # Zapisanie id i aktualnej pozycji robota do listy przemieszczeń dla danej iteracji
+                r_pos = robot.get_actual_position()
+                id = robot.get_id()
+                robot_pos_sim_itr.append([id, r_pos])
+            # Dodanie listy przemieszczen danej iteracji do listy symulacji
+            robot_position_during_simulation_list.append(deepcopy(robot_pos_sim_itr))
+
 
         for robot in self.__robots_swarm:
             if robot.failure_detected():
                 r_pos = robot.get_actual_position()
                 failure_map[r_pos[0], r_pos[1]] += 1
 
-        return traffic_map, loading_map, failure_map
+        return traffic_map, loading_map, failure_map, robot_position_during_simulation_list
 
     def __generate_allowed_move(self, actual_position):
         vmax = self.__allowed_positions.shape[0]
