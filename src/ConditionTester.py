@@ -60,7 +60,7 @@ class OneConditionTester(ConditionTesterInterface):
         :return [bool]: odpowiedź na pytanie, czy dane rozwiązanie spełnia ograniczenia
         """
 
-        return (not np.any(solution[self.__ban_matrix])) or (not np.any(solution[self.__banned_positions]))
+        return (not np.any(solution[self.__ban_matrix])) and (not np.any(solution[self.__banned_positions]))
 
     def __create_ban_matrix(self) -> np.array:
         """
