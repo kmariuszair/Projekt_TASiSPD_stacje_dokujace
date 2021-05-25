@@ -544,7 +544,7 @@ def _plot_robots_movements(_robot_mov_list: list, _barrier_map: np.array, doc_st
         for x in range(0, x_size):
             for y in range(0, y_size):
                 if doc_station_map[x][y] != 0:
-                    plt.plot(x, y, 'ro')
+                    plt.plot(y, x, 'ro')
 
     plt.xlabel('Pozycja osi Y')
     plt.ylabel('Pozycja osi X')
@@ -602,7 +602,7 @@ class RobotAnimationPlot:
                 for x in range(0, x_size):
                     for y in range(0, y_size):
                         if self.doc_station_map[x][y] != 0:
-                            plt.plot(x, y, 'ro')
+                            plt.plot(y, x, 'ro')
 
             # Utwórz macierz ruchu i na jej podstawie narysuj strzałki
             if frame > 0:
