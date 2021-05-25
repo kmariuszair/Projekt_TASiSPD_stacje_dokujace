@@ -543,8 +543,8 @@ def _plot_robots_movements(_robot_mov_list: list, _barrier_map: np.array, doc_st
     if doc_station_map is not None:
         for x in range(0, x_size):
             for y in range(0, y_size):
-                if doc_station_map[x][y] != 0:
-                    plt.plot(x, y, 'ro')
+                if doc_station_map[y][x] != 0:
+                    plt.plot(y, x, 'ro')
 
     plt.xlabel('Pozycja osi Y')
     plt.ylabel('Pozycja osi X')
@@ -564,3 +564,94 @@ def plot_robots_movements_with_doc_station(_robot_mov_list: list, _barrier_map: 
     # Wywołaj dedykowaną do funkcje
     _plot_robots_movements(_robot_mov_list, _barrier_map, doc_station_map, 'Przemiszczenie_robotow_ze_stacjami_dokujacymi')
 
+"""
+    Animowane przemiszczanie sie robotów z opcja wyswietalnia pozycji stacji dokujących
+"""
+class RobotAnimationPlot:
+    def __init__(self):
+        self.robot_anim_itr = 0
+        self.doc_station_map = None
+        self.barrier_map = None
+        self.robot_mov_list = None
+        self.file_name = 'none.mp4'
+
+    def _anim_robot_mov(self, _robot_mov_list: list, _barrier_map: np.array, _doc_station_map: np.array = None, plot_name:str = 'animacja_robotow.mp4'):
+        self.doc_station_map = _doc_station_map
+        self.barrier_map = _barrier_map
+        self.robot_mov_list = _robot_mov_list
+        self.file_name = plot_name
+
+        x_size = _barrier_map.shape[1]
+        y_size = _barrier_map.shape[0]
+        frame_offset = 3
+        fig, ax = plt.subplots()
+        self.robot_anim_itr = len(_robot_mov_list)
+        """
+            Funkcja wewnętrza służąca do generowania klatki animacjia. 
+            Animuje ona ruch wykonany przez stacje dokujące w danej iteracji.
+        """
+
+        def animate_2(frame):
+            if frame >= self.robot_anim_itr:
+                frame = self.robot_anim_itr - 1
+            plt.clf()
+            im = plt.imshow(self.barrier_map, origin='lower', interpolation='None', cmap='plasma')
+
+            # Zaznaczenie finalnej pozycji stacji dokujących
+            if self.doc_station_map is not None:
+                for x in range(0, x_size):
+                    for y in range(0, y_size):
+                        if self.doc_station_map[y][x] != 0:
+                            plt.plot(y, x, 'ro')
+
+            # Utwórz macierz ruchu i na jej podstawie narysuj strzałki
+            if frame > 0:
+                curr_mov = self.robot_mov_list[frame]
+                if self.robot_anim_itr == 0:
+                    prev_mov = curr_mov
+                else:
+                    prev_mov = self.robot_mov_list[frame - 1]
+
+                # petla po poszczegolnych robotach
+                for current_robot in curr_mov:
+                    id = current_robot[0]
+                    pos_arrow_head = current_robot[1]
+                    x_arrow_head = pos_arrow_head[1]
+                    y_arrow_head = pos_arrow_head[0]
+                    # Znajdz poorzednia pozycje danego robota
+                    prev_robot = [x for x in prev_mov if x[0] == id]
+                    pos_arrow_begin = prev_robot[0][1]
+                    x_arrow_begin = pos_arrow_begin[1]
+                    y_arrow_begin = pos_arrow_begin[0]
+                    dx = x_arrow_head - x_arrow_begin
+                    dy = y_arrow_head - y_arrow_begin
+
+                    ax.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops=dict(arrowstyle="->"))
+                    plt.arrow(x_arrow_begin, y_arrow_begin, dx, dy, color='white', width=0.005,
+                              length_includes_head=True, head_width=0.1, head_length=0.15)
+                    plt.scatter(x_arrow_begin, y_arrow_begin, facecolors='none', edgecolors='white')
+            plt.xlabel('Pozycja osi Y')
+            plt.ylabel('Pozycja osi X')
+            title = 'Pozycja robotow dla iteracji {}'.format(frame + 1)
+            plt.title(title)
+
+            plt.colorbar(im)
+            return fig,
+
+        # Utwórz animację na podstawie mapy
+        # Offset ma na celu uniknięcie pewnego buga podczas generacji
+        anim = animation.FuncAnimation(fig, animate_2, frames=self.robot_anim_itr + frame_offset,
+                                       interval=250, blit=True)
+        # Zapisz animację do pliku pod formatem mp4
+        save_anim_to_file(anim, self.file_name)
+
+    def robot_animation(self, _robot_mov_list: list, _barrier_map: np.array):
+        self._anim_robot_mov(_robot_mov_list, _barrier_map)
+
+    def robot_animation_with_doc_station(self, _robot_mov_list: list, _barrier_map: np.array, _doc_station_map: np.array):
+        self._anim_robot_mov(_robot_mov_list, _barrier_map, _doc_station_map, 'ruch_robotow_ze_stacjami_dokujacymi.mp4')
+
+"""
+    Globalny byt klasy służacy do prostej animacji przemieszczania się robotów
+"""
+dinozaur_pimpus = RobotAnimationPlot()

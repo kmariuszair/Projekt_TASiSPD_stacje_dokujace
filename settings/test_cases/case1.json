@@ -7,7 +7,7 @@
                 20
             ],
             "clients_number": 500,
-            "max_clients_number_in_cell": 10,
+            "max_clients_number_in_cell": 100,
             "n_max": 10,
             "p_max": 1000,
             "d_max": 2,
@@ -16,7 +16,7 @@
             "min_time_in_lt_tl": 2,
             "time_lim": null, 
  	 	 	"log_path": "logs/case1/subcase1a",
-            "iteration_lim": 100,
+            "iteration_lim": 10,
             "starting_solution": null, 
  	 	 	"dynamic_neighborhood": true
         }

@@ -51,6 +51,7 @@ def run_algorithm(path_to_settings=None):
     # Wizualizacja mapy rozmieszczenia barrier oraz trajektorii ruchu robotów
     DataCollectorPlotter.plot_map_barriers(barriers_map)
     DataCollectorPlotter.plot_robots_movements(robot_pos_sim, barriers_map)
+    DataCollectorPlotter.dinozaur_pimpus.robot_animation(robot_pos_sim, barriers_map)
 
     DataCollectorPlotter.plot_client_map(traffic_map.astype('int32'), int(np.max(traffic_map) + 1))
     logging.info("Inicjalizuję solwer")
@@ -74,6 +75,7 @@ def run_algorithm(path_to_settings=None):
     solution_util = SolutionUtilization.SolutionUtilization(traffic_map.astype('int32'), solution.astype('int32'), p_max, d_max)
     # Wyznacz mape przemieszczen symulacyjnych robotow z optymalna pozycja stacji dokujacych
     DataCollectorPlotter.plot_robots_movements_with_doc_station(robot_pos_sim, barriers_map, solution)
+
     # Pokaż i zapis do pliku wykresy uzyskanego rozwiązania
     solution_util.plot_solution_utilization()
     solution_util.plot_clients_within_plt_zone()
@@ -82,7 +84,6 @@ def run_algorithm(path_to_settings=None):
     solution_util.plot_av_dist_for_cell_with_given_cliens()
     # Pokaż w konsoli informacje o uzyskanym rozwiązaniu
     solution_util.print_solution_utilization_data()
-
     # zamknij plik z logami
     rootLogger.removeHandler(fileHandler)
 
