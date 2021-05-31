@@ -80,6 +80,8 @@ class RobotsSwarm:
             self.iter_count += 1
             return robot
 
+    def get_robot_count(self):
+        return len(self.robots_list)
 
 class TrafficMapGenerator:
 
@@ -111,9 +113,10 @@ class TrafficMapGenerator:
         loading_map = np.zeros(self.__docking_stations_map.shape)
         # mapa pokazująca, gdzie ewentualnie znajdują się popsute roboty
         failure_map = np.zeros(self.__docking_stations_map.shape)
-        # lista pozycji poszczegolnych robotow w danej iteracji symulajci
-        # Poszczegole pole listy zaweira liste pozycji robotow w danej iteracji
-        robot_position_during_simulation_list = []
+        # Macierz zaweirająca pozcyje danego robota w danej iteracji
+        # Skałda sie ona z wymiarów długosć iteracji x ilosć robotów x pozycja (2xint)
+        robot_count = self.__robots_swarm.get_robot_count()
+        robot_position = np.zeros((sim_len, robot_count, 2))
 
         for _ in range(sim_len):  # powtarza kroki symulacji tak długo, jak zadano
             robot_pos_sim_itr = []
@@ -144,12 +147,11 @@ class TrafficMapGenerator:
                         random_load = np.random.randint(-1, 2)
                         robot.make_move(direction, random_load, 0)
                         traffic_map[r_pos[0], r_pos[1]] += 1
-                # Zapisanie id i aktualnej pozycji robota do listy przemieszczeń dla danej iteracji
+                # Zapisanie pozycji danego robota do odpowiedniej komórki w macierzy
                 r_pos = robot.get_actual_position()
                 id = robot.get_id()
-                robot_pos_sim_itr.append([id, r_pos])
-            # Dodanie listy przemieszczen danej iteracji do listy symulacji
-            robot_position_during_simulation_list.append(deepcopy(robot_pos_sim_itr))
+                robot_position[_, id, :] = r_pos
+
 
 
         for robot in self.__robots_swarm:
@@ -157,7 +159,7 @@ class TrafficMapGenerator:
                 r_pos = robot.get_actual_position()
                 failure_map[r_pos[0], r_pos[1]] += 1
 
-        return traffic_map, loading_map, failure_map, robot_position_during_simulation_list
+        return traffic_map, loading_map, failure_map, robot_position
 
     def __generate_allowed_move(self, actual_position):
         vmax = self.__allowed_positions.shape[0]

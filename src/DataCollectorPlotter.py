@@ -502,7 +502,7 @@ def plot_map_barriers(_barrier_map:np.array):
     plt.show()
 
 
-def _plot_robots_movements(_robot_mov_list: list, _barrier_map: np.array, doc_station_map: np.array = None, plot_name:str = 'przemieszczenie_robotow'):
+def _plot_robots_movements(_robot_mov_list: np.array, _barrier_map: np.array, doc_station_map: np.array = None, plot_name:str = 'przemieszczenie_robotow'):
     """
     Funkcja służąca do wygenerowania mapy wszystkich ruchów jakie miały miejsce podczas przeprowadzania symulacji
     Istnieje opcjoinalny parametr do naniesienia pozycji stacji dokujących
@@ -516,20 +516,16 @@ def _plot_robots_movements(_robot_mov_list: list, _barrier_map: np.array, doc_st
     # Wyswietlanie mapy barrier
     im = plt.imshow(_barrier_map, origin='lower', interpolation='None', cmap='plasma')
 
-    __iteration_count = len(_robot_mov_list)
+    (__iteration_count, robot_count, _) = _robot_mov_list.shape
     # Petla iterujaca po poszczegolnych etapach symulacji
     for itr in range(1, __iteration_count):
-        curr_mov = _robot_mov_list[itr]
-        prev_mov = _robot_mov_list[itr - 1]
         # petla po poszczegolnych robotach
-        for current_robot in curr_mov:
-            id = current_robot[0]
-            pos_arrow_head = current_robot[1]
+        for robot_id in range(robot_count):
+            pos_arrow_head = _robot_mov_list[itr, robot_id, :]
             x_arrow_head = pos_arrow_head[1]
             y_arrow_head = pos_arrow_head[0]
             # Znajdz poorzednia pozycje danego robota
-            prev_robot = [x for x in prev_mov if x[0] == id]
-            pos_arrow_begin = prev_robot[0][1]
+            pos_arrow_begin = _robot_mov_list[itr-1, robot_id, :]
             x_arrow_begin = pos_arrow_begin[1]
             y_arrow_begin = pos_arrow_begin[0]
             dx = x_arrow_head - x_arrow_begin
@@ -555,12 +551,12 @@ def _plot_robots_movements(_robot_mov_list: list, _barrier_map: np.array, doc_st
     plt.show()
 
 
-def plot_robots_movements(_robot_mov_list: list, _barrier_map: np.array):
+def plot_robots_movements(_robot_mov_list: np.array, _barrier_map: np.array):
     # Wywołaj dedykowaną do funkcje
     _plot_robots_movements(_robot_mov_list, _barrier_map)
 
 
-def plot_robots_movements_with_doc_station(_robot_mov_list: list, _barrier_map: np.array, doc_station_map: np.array):
+def plot_robots_movements_with_doc_station(_robot_mov_list: np.array, _barrier_map: np.array, doc_station_map: np.array):
     # Wywołaj dedykowaną do funkcje
     _plot_robots_movements(_robot_mov_list, _barrier_map, doc_station_map, 'Przemiszczenie_robotow_ze_stacjami_dokujacymi')
 
@@ -572,25 +568,24 @@ class RobotAnimationPlot:
         self.robot_anim_itr = 0
         self.doc_station_map = None
         self.barrier_map = None
-        self.robot_mov_list = None
+        self.robot_moves = None
         self.file_name = 'none.mp4'
 
-    def _anim_robot_mov(self, _robot_mov_list: list, _barrier_map: np.array, _doc_station_map: np.array = None, plot_name:str = 'animacja_robotow.mp4'):
+    def _anim_robot_mov(self, _robot_moves: np.array, _barrier_map: np.array, _doc_station_map: np.array = None, plot_name:str = 'animacja_robotow.mp4'):
         self.doc_station_map = _doc_station_map
         self.barrier_map = _barrier_map
-        self.robot_mov_list = _robot_mov_list
         self.file_name = plot_name
-
+        self.robot_moves = _robot_moves
         x_size = _barrier_map.shape[1]
         y_size = _barrier_map.shape[0]
         frame_offset = 3
         fig, ax = plt.subplots()
-        self.robot_anim_itr = len(_robot_mov_list)
         """
             Funkcja wewnętrza służąca do generowania klatki animacjia. 
             Animuje ona ruch wykonany przez stacje dokujące w danej iteracji.
         """
-
+        (__iteration_count, robot_count, _) = self.robot_moves.shape
+        self.robot_anim_itr = __iteration_count
         def animate_2(frame):
             if frame >= self.robot_anim_itr:
                 frame = self.robot_anim_itr - 1
@@ -606,30 +601,27 @@ class RobotAnimationPlot:
 
             # Utwórz macierz ruchu i na jej podstawie narysuj strzałki
             if frame > 0:
-                curr_mov = self.robot_mov_list[frame]
+                curr_mov = self.robot_moves[frame, :, :]
                 if self.robot_anim_itr == 0:
                     prev_mov = curr_mov
                 else:
-                    prev_mov = self.robot_mov_list[frame - 1]
-
+                    prev_mov = self.robot_moves[frame - 1, :, :]
                 # petla po poszczegolnych robotach
-                for current_robot in curr_mov:
-                    id = current_robot[0]
-                    pos_arrow_head = current_robot[1]
+                for robot_id in range(robot_count):
+                    pos_arrow_head = curr_mov[robot_id, :]
                     x_arrow_head = pos_arrow_head[1]
                     y_arrow_head = pos_arrow_head[0]
                     # Znajdz poorzednia pozycje danego robota
-                    prev_robot = [x for x in prev_mov if x[0] == id]
-                    pos_arrow_begin = prev_robot[0][1]
+                    pos_arrow_begin = prev_mov[robot_id, :]
                     x_arrow_begin = pos_arrow_begin[1]
                     y_arrow_begin = pos_arrow_begin[0]
                     dx = x_arrow_head - x_arrow_begin
                     dy = y_arrow_head - y_arrow_begin
-
                     ax.annotate("", xy=(0.5, 0.5), xytext=(0, 0), arrowprops=dict(arrowstyle="->"))
                     plt.arrow(x_arrow_begin, y_arrow_begin, dx, dy, color='white', width=0.005,
                               length_includes_head=True, head_width=0.1, head_length=0.15)
                     plt.scatter(x_arrow_begin, y_arrow_begin, facecolors='none', edgecolors='white')
+
             plt.xlabel('Pozycja osi Y')
             plt.ylabel('Pozycja osi X')
             title = 'Pozycja robotow dla iteracji {}'.format(frame + 1)
@@ -645,11 +637,11 @@ class RobotAnimationPlot:
         # Zapisz animację do pliku pod formatem mp4
         save_anim_to_file(anim, self.file_name)
 
-    def robot_animation(self, _robot_mov_list: list, _barrier_map: np.array):
-        self._anim_robot_mov(_robot_mov_list, _barrier_map)
+    def robot_animation(self, _robot_mov_arr: np.array, _barrier_map: np.array):
+        self._anim_robot_mov(_robot_mov_arr, _barrier_map)
 
-    def robot_animation_with_doc_station(self, _robot_mov_list: list, _barrier_map: np.array, _doc_station_map: np.array):
-        self._anim_robot_mov(_robot_mov_list, _barrier_map, _doc_station_map, 'ruch_robotow_ze_stacjami_dokujacymi.mp4')
+    def robot_animation_with_doc_station(self, _robot_mov_arr: np.array, _barrier_map: np.array, _doc_station_map: np.array):
+        self._anim_robot_mov(_robot_mov_arr, _barrier_map, _doc_station_map, 'ruch_robotow_ze_stacjami_dokujacymi.mp4')
 
 """
     Globalny byt klasy służacy do prostej animacji przemieszczania się robotów
