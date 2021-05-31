@@ -182,7 +182,7 @@ class Solver:
                                        inspect.getmembers(Solver, predicate=inspect.isfunction)}}
 
         if not (starting_solution is None):
-            if np.sum(starting_solution) == self.__n_max and self.__is_solution_allowed(starting_solution):
+            if np.sum((starting_solution > 0).astype('int32')) == self.__n_max and self.__is_solution_allowed(starting_solution):
                 self.__starting_solution = np.copy(starting_solution)
             else:
                 if self.__record_and_plot_data:

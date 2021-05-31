@@ -55,7 +55,8 @@ def run_algorithm(path_to_settings=None):
 
     DataCollectorPlotter.plot_client_map(traffic_map.astype('int32'), int(np.max(traffic_map) + 1))
     logging.info("Inicjalizuję solwer")
-    solver = src.Solver.Solver(np.sum((docking_stations_map>0).astype('int32')),
+    docking_stations_map = (docking_stations_map > 0).astype('int32')
+    solver = src.Solver.Solver(np.sum((docking_stations_map > 0).astype('int32')),
                                p_max,
                                d_max,
                                r,
