@@ -78,6 +78,10 @@ class Robot:
         self.__settings = settings
         self.__state = RobotState(self.__settings)
 
+        self.netto_gain = 0  # zysk netto dla jednego robota = suma masy przewiezionych towarów
+        self.cumulative_loading_time = 0  # łączny czas ładowania
+        self.cumulative_awaiting_time = 0  # łączny czas oczekiwania
+
     def make_move(self, direction: np.array, new_load: int, loading_speed: int):
         """
         :direction: wektor przemieszczenia
@@ -88,6 +92,12 @@ class Robot:
         if self.__state.actual_load + new_load < 0:  # gdyby się zdarzyło, że chcielibyśmy wziąć z robota więcej niż
             new_load = self.__state.actual_load      # ma załadowane
         self.__state.update_state(direction, new_load, loading_speed)
+
+        if new_load > 0:
+            self.netto_gain += 1
+
+        if self.__state.is_loading:
+            self.cumulative_loading_time += 1
 
     def get_actual_position(self) -> np.array:
         return self.__state.actual_position

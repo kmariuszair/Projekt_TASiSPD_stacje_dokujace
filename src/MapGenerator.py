@@ -159,6 +159,15 @@ class TrafficMapGenerator:
                 r_pos = robot.get_actual_position()
                 failure_map[r_pos[0], r_pos[1]] += 1
 
+        # TODO: dodać to do return
+        cumulative_gain = 0
+        cumulative_loading_times = 0
+        cumulative_awaiting_times = 0
+        for robot in self.__robots_swarm:
+            cumulative_gain += robot.netto_gain
+            cumulative_loading_times += robot.cumulative_loading_time
+            cumulative_awaiting_times += robot.cumulative_awaiting_time
+
         return traffic_map, loading_map, failure_map, robot_position
 
     def __generate_allowed_move(self, actual_position):
