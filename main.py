@@ -9,7 +9,7 @@ import src.SolutionUtilization as SolutionUtilization
 from src.SettingMenager import setting_menager
 import src.FileMenager as FileMenager
 import src.MapGenerator as MapGenerator
-
+import cv2
 
 def run_algorithm(path_to_settings=None):
     if path_to_settings is not None:
@@ -54,7 +54,13 @@ def run_algorithm(path_to_settings=None):
     DataCollectorPlotter.dinozaur_pimpus.robot_animation(robot_pos_sim, barriers_map)
 
     DataCollectorPlotter.plot_client_map(traffic_map.astype('int32'), int(np.max(traffic_map) + 1))
+    # Dylatacja na mapę barier w celu ominięcia i nie blokowania pól truskawek
+    #TODO: Wybierz jeden z poniższych trybów; dodać do listy konfiguracyjnej
+    barriers_map_w_d = cv2.dilate(barriers_map.astype(np.uint8), np.ones((3,3),np.uint8))
+    # barriers_map_w_d = barriers_map
+
     logging.info("Inicjalizuję solwer")
+
     solver = src.Solver.Solver(np.sum((docking_stations_map>0).astype('int32')),
                                p_max,
                                d_max,
@@ -65,7 +71,7 @@ def run_algorithm(path_to_settings=None):
                                iteration_lim=iteration_lim,
                                dynamic_neighborhood=dynamic_neighborhood,
                                starting_solution=docking_stations_map,
-                               banned_positions=barriers_map)
+                               banned_positions=barriers_map_w_d)
     # ustawiamy limit iteracji, ewentualnie można ustawić limit czasu
     logging.info("Rozpoczynam rozwiązywanie problemu")
     solution = solver.solve(record_and_plot_data=True, telemetry_on=True)
