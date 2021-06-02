@@ -60,8 +60,8 @@ def run_algorithm(path_to_settings=None):
     # barriers_map_w_d = barriers_map
 
     logging.info("Inicjalizuję solwer")
-
-    solver = src.Solver.Solver(np.sum((docking_stations_map>0).astype('int32')),
+    docking_stations_map = (docking_stations_map > 0).astype('int32')
+    solver = src.Solver.Solver(np.sum((docking_stations_map > 0).astype('int32')),
                                p_max,
                                d_max,
                                r,
