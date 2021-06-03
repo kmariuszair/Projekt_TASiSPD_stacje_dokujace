@@ -2,7 +2,6 @@
 Implementacja modelu robota. Służy do generowania mapy.
 """
 import numpy as np
-from typing import Tuple
 
 
 class RobotSettings:
@@ -34,7 +33,9 @@ class RobotState:
 
     def update_state(self, direction: np.array, new_load: int, loading_speed: int):
         """
+        :direction: kierunek ruchu
         :new_load: Zmiana stanu obciążenia robota (dodatnie, gdy zwiększamy obciążenie, ujemne, gdy odkładamy towar)
+        :loading_speed: prędkość ładowania
         """
         if not self.battery_low:
             """

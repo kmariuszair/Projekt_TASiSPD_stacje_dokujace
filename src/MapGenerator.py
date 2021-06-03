@@ -17,13 +17,16 @@ def generate_random_settings(settings_number: int, allowed_positions_map: np.arr
     :allowed_positions_map: mapa pozycji dozwolonych --- 0 oznacza brak bariery, 1 oznacza barierę
     """
     for id in range(settings_number):
-        battery_size = np.random.randint(501, 1000)  # 501, bo battery_size musi byś większe od minimum z starting_battery_level
-        starting_battery_level = np.random.randint(np.floor(0.5*battery_size), battery_size)
+        battery_size = np.random.randint(501,
+                                         1000)  # 501, bo battery_size musi byś większe od minimum z starting_battery_level
+        starting_battery_level = np.random.randint(np.floor(0.5 * battery_size), battery_size)
         max_load = np.random.randint(25, 50)
-        x0, y0 = np.random.randint(0, allowed_positions_map.shape[0]), np.random.randint(0, allowed_positions_map.shape[1])
+        x0, y0 = np.random.randint(0, allowed_positions_map.shape[0]), np.random.randint(0,
+                                                                                         allowed_positions_map.shape[1])
         while allowed_positions_map[x0, y0] == 1:  # dopóki trafiamy w przeszkodę
             x0, y0 = np.random.randint(0, allowed_positions_map.shape[0]), np.random.randint(0,
-                                                                                         allowed_positions_map.shape[1])
+                                                                                             allowed_positions_map.shape[
+                                                                                                 1])
         starting_position = np.array([x0, y0])
         yield RobotModel.RobotSettings(battery_size, starting_battery_level, max_load, starting_position, id)
 
@@ -83,6 +86,7 @@ class RobotsSwarm:
     def get_robot_count(self):
         return len(self.robots_list)
 
+
 class TrafficMapGenerator:
 
     def __init__(self, allowed_positions_map: np.array, docking_stations_map: np.array, robots_number: int,
@@ -92,11 +96,14 @@ class TrafficMapGenerator:
         self.__allowed_positions = allowed_positions_map
         # użyj przekazanego roju robotów lub wygeneruj losowy
         self.__robots_swarm = robots_swarm if robots_swarm else RobotsSwarm(robots_number, allowed_positions_map,
-                                                            predefined_settings=robots_swarm_predefined_settings)
+                                                                            predefined_settings=robots_swarm_predefined_settings)
         # tam, gdzie wartości są większe od zera, tam znajdują się stacje dokujące, wartość danej komórki oznacza
         # prędkość ładowania
         self.__docking_stations_map = docking_stations_map
         self.__paths_to_docks = {}
+
+        self.no_trips_to_docking_stations = 0
+        self.cum_dist_to_dock_when_bat_low = 0
 
     def generate_map(self, sim_len: int):
         """
@@ -122,14 +129,15 @@ class TrafficMapGenerator:
             robot_pos_sim_itr = []
             for robot in self.__robots_swarm:  # aktualizacja stanu dla każdego robota
                 if robot.failure_detected():  # jeśli robot ma usterkę, to jest pomijany
-                    continue                  # (nie zakładamy możliwości naprawy w czasie symulacji)
+                    continue  # (nie zakładamy możliwości naprawy w czasie symulacji)
                 elif robot.is_loading():  # jeśli robot się ładuje
                     r_pos = robot.get_actual_position()
                     robot.make_move(np.array([0, 0]), 0, self.__docking_stations_map[r_pos[0]][r_pos[1]])
                 else:  # jeśli robot jest w stanie normalnej pracy
                     if robot.battery_low():  # jeśli robot ma mało baterii
                         r_pos = robot.get_actual_position()
-                        if self.__docking_stations_map[r_pos[0]][r_pos[1]] > 0: # jeśli robot przyjechał do stacji dokującej
+                        if self.__docking_stations_map[r_pos[0]][
+                            r_pos[1]] > 0:  # jeśli robot przyjechał do stacji dokującej
                             robot.make_move(np.array([0, 0]), 0, self.__docking_stations_map[r_pos[0]][r_pos[1]])
                             # usuwa tymczasowo wygenerowaną ścieżkę do najbliższej stacji dokującej
                             # powinna zostać usunięta pusta lista
@@ -152,8 +160,6 @@ class TrafficMapGenerator:
                 id = robot.get_id()
                 robot_position[_, id, :] = r_pos
 
-
-
         for robot in self.__robots_swarm:
             if robot.failure_detected():
                 r_pos = robot.get_actual_position()
@@ -168,7 +174,9 @@ class TrafficMapGenerator:
             cumulative_loading_times += robot.cumulative_loading_time
             cumulative_awaiting_times += robot.cumulative_awaiting_time
 
-        return traffic_map, loading_map, failure_map, robot_position
+        return traffic_map, loading_map, failure_map, robot_position, \
+               cumulative_gain, cumulative_loading_times, cumulative_awaiting_times, \
+               self.cum_dist_to_dock_when_bat_low, self.no_trips_to_docking_stations
 
     def __generate_allowed_move(self, actual_position):
         vmax = self.__allowed_positions.shape[0]
@@ -180,7 +188,7 @@ class TrafficMapGenerator:
             random_move = np.random.randint(-1, 2, 2)
             new_v = actual_position[0] + random_move[0]
             new_h = actual_position[1] + random_move[1]
-        while self.__allowed_positions[actual_position[0]+random_move[0]][actual_position[1]+random_move[1]] == 1:
+        while self.__allowed_positions[actual_position[0] + random_move[0]][actual_position[1] + random_move[1]] == 1:
             random_move = np.random.randint(-1, 2, 2)
             new_v = actual_position[0] + random_move[0]
             new_h = actual_position[1] + random_move[1]
@@ -194,10 +202,13 @@ class TrafficMapGenerator:
         if robot_id not in self.__paths_to_docks.keys():
             # odwrotna indeksacja, najpierw podany numer kolumny a potem wiersza, wartości też zwracane w odwrotnej indeksacji
             self.__paths_to_docks[robot_id] = self.__bfs((robot_position[1], robot_position[0]))
+            self.no_trips_to_docking_stations += 1
+            self.cum_dist_to_dock_when_bat_low += len(self.__paths_to_docks[robot_id])
 
         path = self.__paths_to_docks[robot_id]
         try:
-            next_point = path.pop(0)  # może się zdarzyć 'pop from empty list', gdy robot będzie już na miejscu stacji dokującej
+            next_point = path.pop(
+                0)  # może się zdarzyć 'pop from empty list', gdy robot będzie już na miejscu stacji dokującej
             xdiff, ydiff = next_point[1] - robot_position[0], next_point[0] - robot_position[1]  # coś nie tak
             return np.array([xdiff, ydiff])
         except IndexError:

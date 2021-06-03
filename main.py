@@ -46,7 +46,7 @@ def run_algorithm(path_to_settings=None):
 
     robots_simulation = MapGenerator.TrafficMapGenerator(barriers_map, docking_stations_map, robots_number)
 
-    traffic_map, _, _, robot_pos_sim = robots_simulation.generate_map(sim_time)
+    traffic_map, _, _, robot_pos_sim, _, _, _, _, _ = robots_simulation.generate_map(sim_time)
 
     # Wizualizacja mapy rozmieszczenia barrier oraz trajektorii ruchu robotów
     DataCollectorPlotter.plot_map_barriers(barriers_map)
