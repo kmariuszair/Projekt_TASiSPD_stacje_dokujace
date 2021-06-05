@@ -9,6 +9,7 @@ import src.SolutionUtilization as SolutionUtilization
 from src.SettingMenager import setting_menager
 import src.FileMenager as FileMenager
 import src.MapGenerator as MapGenerator
+import src.Helpers as Helpers
 import cv2
 
 def run_algorithm(path_to_settings=None):
@@ -40,13 +41,37 @@ def run_algorithm(path_to_settings=None):
     robots_simulation_data = setting_menager.get_RobotsSimulation_settings()
 
     barriers_map = np.load(robots_simulation_data['barriers_map']) if robots_simulation_data['barriers_map'] else None
-    docking_stations_map = np.load(robots_simulation_data['docking_stations_map']) if robots_simulation_data['docking_stations_map'] else None
+    # Dylatacja na mapę barier w celu ominięcia i nie blokowania pól truskawek
+    #TODO: Wybierz jeden z poniższych trybów; dodać do listy konfiguracyjnej
+    barriers_map_w_d = cv2.dilate(barriers_map.astype(np.uint8), np.ones((3,3),np.uint8))
+    # barriers_map_w_d = barriers_map
+    # ZMIANA STRATEGII - zamiast zadawać początkową mapę stacji, to ją losujemy
+    docks_no = robots_simulation_data['docking_stations_no']
+    frame = robots_simulation_data['frame']
+    max_investment_cost = robots_simulation_data['max_investment_cost']
+    rootLogger.info("Generuję początkowe pozycje stacji dokujących")
+    i = 0
+    investment_cost = np.inf
+    while investment_cost > max_investment_cost and i < 100:
+        docking_stations_map, investment_cost = Helpers.generate_docking_stations_map(barriers_map_w_d, docks_no, frame)
+        i += 1
+    if investment_cost > max_investment_cost:
+        raise RuntimeError('Nie można wygenerować początkowego układu stacji dokujących o koszczcie mniejszym od maksymalnego')
+    rootLogger.info("Koszt wygenerowanego przypadku testowego: %.2f" % investment_cost)
+    # docking_stations_map = np.load(robots_simulation_data['docking_stations_map']) if robots_simulation_data['docking_stations_map'] else None
     robots_number = robots_simulation_data['robots_number']
     sim_time = robots_simulation_data['sim_time']
 
     robots_simulation = MapGenerator.TrafficMapGenerator(barriers_map, docking_stations_map, robots_number)
 
-    traffic_map, _, _, robot_pos_sim, _, _, _, _, _ = robots_simulation.generate_map(sim_time)
+    traffic_map, _, _, robot_pos_sim, cumulative_gain, cumulative_loading_times, cumulative_awaiting_times, \
+    cum_dist_to_dock_when_bat_low, no_trips_to_docking_stations = robots_simulation.generate_map(sim_time)
+
+    rootLogger.info("Łączny zysk z inwestycji: " + str(cumulative_gain))
+    rootLogger.info("Łączny czas ładowania: " + str(cumulative_loading_times))
+    rootLogger.info("Łączny czas oczekiwania na ładowanie: " + str(cumulative_awaiting_times))
+    rootLogger.info("Łączna odległość do stacji ładującej, gdy roboty przechodzą w stan niskiej baterii: " + str(cum_dist_to_dock_when_bat_low))
+    rootLogger.info("Łączna ilość przejazdów do stacji dokujących: " + str(int(no_trips_to_docking_stations)))
 
     # Wizualizacja mapy rozmieszczenia barrier oraz trajektorii ruchu robotów
     DataCollectorPlotter.plot_map_barriers(barriers_map)
@@ -54,10 +79,6 @@ def run_algorithm(path_to_settings=None):
     DataCollectorPlotter.dinozaur_pimpus.robot_animation(robot_pos_sim, barriers_map)
 
     DataCollectorPlotter.plot_client_map(traffic_map.astype('int32'), int(np.max(traffic_map) + 1))
-    # Dylatacja na mapę barier w celu ominięcia i nie blokowania pól truskawek
-    #TODO: Wybierz jeden z poniższych trybów; dodać do listy konfiguracyjnej
-    barriers_map_w_d = cv2.dilate(barriers_map.astype(np.uint8), np.ones((3,3),np.uint8))
-    # barriers_map_w_d = barriers_map
 
     logging.info("Inicjalizuję solwer")
     docking_stations_map = (docking_stations_map > 0).astype('int32')
@@ -68,6 +89,7 @@ def run_algorithm(path_to_settings=None):
                                min_time_in_tl,
                                min_time_in_lt_tl,
                                traffic_map,
+                               frame,
                                iteration_lim=iteration_lim,
                                dynamic_neighborhood=dynamic_neighborhood,
                                starting_solution=docking_stations_map,

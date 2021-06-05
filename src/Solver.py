@@ -101,6 +101,7 @@ class Solver:
                  min_time_in_tl: int,
                  min_time_in_lt_tl: int,
                  client_map: np.array,
+                 frame: int = 1,
 
                  record_and_plot_data: bool = False,
 
@@ -146,7 +147,8 @@ class Solver:
         self.__condition_tester = ConditionTester.OneConditionTester(p_max=self.__p_max,
                                                                      d_max=self.__d_max,
                                                                      clients_map=self.__client_map,
-                                                                     banned_positions=self.__banned_positions)
+                                                                     banned_positions=self.__banned_positions,
+                                                                     frame=frame)
 
         self.__record_and_plot_data = record_and_plot_data
 
@@ -237,7 +239,7 @@ class Solver:
         self.__Q_a = self.__cost(self.__x_a)
         self.__Q_min = self.__Q_a
 
-        logging.info("Koszt rozwiązania początkowego: {}".format(self.__Q_a))
+        logging.info("Koszt rozwiązania początkowego: %.2f" % self.__Q_a)
         self.__collect_and_represent_data.collect_data(self.__x_a, self.__Q_a, self.__tabu_list,
                                                        self.__long_term_tabu_list, 0,
                                                        0, 0,

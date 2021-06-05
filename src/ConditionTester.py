@@ -15,7 +15,9 @@ class ConditionTesterInterface(ABC):
                  p_max: int,
                  d_max: int,
 
-                 clients_map: np.array):
+                 clients_map: np.array,
+                 banned_positions: np.array,
+                 frame: int):
         pass
 
     @abstractmethod
@@ -34,7 +36,8 @@ class OneConditionTester(ConditionTesterInterface):
                  d_max: int,
 
                  clients_map: np.array,
-                 banned_positions: np.array):
+                 banned_positions: np.array,
+                 frame: int):
         """
         :param p_max: maksymalna liczba klientów w zasięgu działania stacji dokującej
         :param d_max: zasięg działania stacji dokujących
@@ -47,6 +50,7 @@ class OneConditionTester(ConditionTesterInterface):
         self.__banned_positions = banned_positions == 1
 
         self.__map_shape = self.__clients_map.shape
+        self.frame = frame
 
         self.__mask = Helpers.diamond(self.__d_max)
 
@@ -60,7 +64,7 @@ class OneConditionTester(ConditionTesterInterface):
         :return [bool]: odpowiedź na pytanie, czy dane rozwiązanie spełnia ograniczenia
         """
 
-        return (not np.any(solution[self.__ban_matrix])) and (not np.any(solution[self.__banned_positions]))
+        return (not np.any(solution[self.__ban_matrix])) and (not np.any(solution[self.__banned_positions])) and (not np.any(solution[self.frame:-self.frame, self.frame:-self.frame]))
 
     def __create_ban_matrix(self) -> np.array:
         """
