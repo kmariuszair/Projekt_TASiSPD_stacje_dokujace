@@ -114,3 +114,9 @@ class Robot:
 
     def is_loading(self):
         return self.__state.is_loading
+
+    def get_battery_level(self):
+        return self.__state.battery_level
+
+    def get_battery_capacity(self):
+        return self.__state.battery_size

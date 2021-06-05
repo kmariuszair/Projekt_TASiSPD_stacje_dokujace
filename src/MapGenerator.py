@@ -105,6 +105,8 @@ class TrafficMapGenerator:
         self.no_trips_to_docking_stations = 0
         self.cum_dist_to_dock_when_bat_low = 0
 
+        self.busy_docks = np.zeros(docking_stations_map.shape, dtype=bool)
+
     def generate_map(self, sim_len: int):
         """
         Generacja mapy.
@@ -133,12 +135,18 @@ class TrafficMapGenerator:
                 elif robot.is_loading():  # jeśli robot się ładuje
                     r_pos = robot.get_actual_position()
                     robot.make_move(np.array([0, 0]), 0, self.__docking_stations_map[r_pos[0]][r_pos[1]])
+                    if robot.get_battery_level() >= robot.get_battery_capacity():
+                        self.busy_docks[r_pos[0]][r_pos[1]] = False
                 else:  # jeśli robot jest w stanie normalnej pracy
                     if robot.battery_low():  # jeśli robot ma mało baterii
                         r_pos = robot.get_actual_position()
                         if self.__docking_stations_map[r_pos[0]][
                             r_pos[1]] > 0:  # jeśli robot przyjechał do stacji dokującej
-                            robot.make_move(np.array([0, 0]), 0, self.__docking_stations_map[r_pos[0]][r_pos[1]])
+                            if not self.busy_docks[r_pos[0]][r_pos[1]]:
+                                self.busy_docks[r_pos[0]][r_pos[1]] = True
+                                robot.make_move(np.array([0, 0]), 0, self.__docking_stations_map[r_pos[0]][r_pos[1]])
+                            else:
+                                robot.cumulative_awaiting_time += 1
                             # usuwa tymczasowo wygenerowaną ścieżkę do najbliższej stacji dokującej
                             # powinna zostać usunięta pusta lista
                             if robot.get_id() in self.__paths_to_docks.keys():
