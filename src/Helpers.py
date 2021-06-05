@@ -31,28 +31,28 @@ def generate_docking_stations_map(allowed_positions: np.array, docks_no: int, fr
                 ind2 = np.random.randint(0, frame_size)
                 if map[:-frame_size, :-frame_size][ind2, ind] + allowed_positions[:-frame_size, :-frame_size][ind2, ind] == 0:
                     map[:-frame_size, :-frame_size][ind2, ind] = np.random.randint(10, 100)
-                    investment_cost += (ind + ind2) * map[:-frame_size, :-frame_size][ind2, ind] / 100
+                    investment_cost += (ind + map.shape[0] - frame_size + ind2) + map[:-frame_size, :-frame_size][ind2, ind]
                     written = True
             elif tst == 1:
                 ind =  np.random.randint(0, map.shape[0] - frame_size - 1)
                 ind2 = np.random.randint(0, frame_size)
                 if map[:-frame_size, -frame_size:][ind, ind2] + allowed_positions[:-frame_size, -frame_size:][ind, ind2] == 0:
                     map[:-frame_size, -frame_size:][ind, ind2] = np.random.randint(10, 100)
-                    investment_cost += (ind + ind2) * map[:-frame_size, -frame_size:][ind, ind2] / 100
+                    investment_cost += (ind + frame_size + ind2 + map_shape[1] - frame_size) + map[:-frame_size, -frame_size:][ind, ind2]
                     written = True
             elif tst == 2:
                 ind = np.random.randint(0, map.shape[1] - frame_size - 1)
                 ind2 = np.random.randint(0, frame_size)
                 if map[-frame_size:, frame_size:][ind2, ind] + allowed_positions[-frame_size:, frame_size:][ind2, ind] == 0:
                     map[-frame_size:, frame_size:][ind2, ind] = np.random.randint(10, 100)
-                    investment_cost += (ind + ind2) * map[-frame_size:, frame_size:][ind2, ind] / 100
+                    investment_cost += (ind + frame_size + ind2) + map[-frame_size:, frame_size:][ind2, ind]
                     written = True
             elif tst == 3:
                 ind = np.random.randint(0, map.shape[1] - frame_size - 1)
                 ind2 = np.random.randint(0, frame_size)
                 if map[frame_size:, :frame_size][ind, ind2] + allowed_positions[frame_size:, :frame_size][ind, ind2] == 0:
                     map[frame_size:, :frame_size][ind, ind2] = np.random.randint(10, 100)
-                    investment_cost += (ind + ind2) * map[frame_size:, :frame_size][ind, ind2] / 100
+                    investment_cost += (ind + ind2) + map[frame_size:, :frame_size][ind, ind2]
                     written = True
     return map, investment_cost
 
