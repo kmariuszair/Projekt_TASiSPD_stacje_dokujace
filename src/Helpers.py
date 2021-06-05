@@ -21,6 +21,7 @@ def generate_docking_stations_map(allowed_positions: np.array, docks_no: int, fr
     map_shape = allowed_positions.shape
     map = np.zeros(map_shape)
     investment_cost = 0
+    maintenance_costs = 0
     for _ in range(docks_no):
         written = False
         # alist = [arr[0, :-1], arr[:-1, -1], arr[-1, 1:], arr[1:, 0]]
@@ -32,6 +33,7 @@ def generate_docking_stations_map(allowed_positions: np.array, docks_no: int, fr
                 if map[:-frame_size, :-frame_size][ind2, ind] + allowed_positions[:-frame_size, :-frame_size][ind2, ind] == 0:
                     map[:-frame_size, :-frame_size][ind2, ind] = np.random.randint(10, 100)
                     investment_cost += (ind + map.shape[0] - frame_size + ind2) + map[:-frame_size, :-frame_size][ind2, ind]
+                    maintenance_costs += map[:-frame_size, :-frame_size][ind2, ind] / 20 + (ind + map.shape[0] - frame_size + ind2) / 100 + 5
                     written = True
             elif tst == 1:
                 ind =  np.random.randint(0, map.shape[0] - frame_size - 1)
@@ -39,6 +41,7 @@ def generate_docking_stations_map(allowed_positions: np.array, docks_no: int, fr
                 if map[:-frame_size, -frame_size:][ind, ind2] + allowed_positions[:-frame_size, -frame_size:][ind, ind2] == 0:
                     map[:-frame_size, -frame_size:][ind, ind2] = np.random.randint(10, 100)
                     investment_cost += (ind + frame_size + ind2 + map_shape[1] - frame_size) + map[:-frame_size, -frame_size:][ind, ind2]
+                    maintenance_costs += map[:-frame_size, -frame_size:][ind, ind2] / 20 + (ind + frame_size + ind2 + map_shape[1] - frame_size) / 100 + 5
                     written = True
             elif tst == 2:
                 ind = np.random.randint(0, map.shape[1] - frame_size - 1)
@@ -46,6 +49,7 @@ def generate_docking_stations_map(allowed_positions: np.array, docks_no: int, fr
                 if map[-frame_size:, frame_size:][ind2, ind] + allowed_positions[-frame_size:, frame_size:][ind2, ind] == 0:
                     map[-frame_size:, frame_size:][ind2, ind] = np.random.randint(10, 100)
                     investment_cost += (ind + frame_size + ind2) + map[-frame_size:, frame_size:][ind2, ind]
+                    maintenance_costs += map[-frame_size:, frame_size:][ind2, ind] / 20 + (ind + frame_size + ind2) / 100 + 5
                     written = True
             elif tst == 3:
                 ind = np.random.randint(0, map.shape[1] - frame_size - 1)
@@ -53,8 +57,9 @@ def generate_docking_stations_map(allowed_positions: np.array, docks_no: int, fr
                 if map[frame_size:, :frame_size][ind, ind2] + allowed_positions[frame_size:, :frame_size][ind, ind2] == 0:
                     map[frame_size:, :frame_size][ind, ind2] = np.random.randint(10, 100)
                     investment_cost += (ind + ind2) + map[frame_size:, :frame_size][ind, ind2]
+                    maintenance_costs += map[frame_size:, :frame_size][ind, ind2] / 20 + (ind + ind2) / 100 + 5
                     written = True
-    return map, investment_cost
+    return map, investment_cost, maintenance_costs
 
 
 def mix_docking_stations_map(old_map: np.array, frame_size: int) -> np.array:

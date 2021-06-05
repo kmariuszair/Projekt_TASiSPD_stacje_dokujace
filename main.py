@@ -49,15 +49,19 @@ def run_algorithm(path_to_settings=None):
     docks_no = robots_simulation_data['docking_stations_no']
     frame = robots_simulation_data['frame']
     max_investment_cost = robots_simulation_data['max_investment_cost']
+    max_maintenance_cost = robots_simulation_data['max_maintenance_cost']
     rootLogger.info("Generuję początkowe pozycje stacji dokujących")
     i = 0
-    investment_cost = np.inf
-    while investment_cost > max_investment_cost and i < 100:
-        docking_stations_map, investment_cost = Helpers.generate_docking_stations_map(barriers_map_w_d, docks_no, frame)
+    investment_cost, maintenance_costs = np.inf, np.inf
+    while investment_cost > max_investment_cost and maintenance_costs > max_maintenance_cost and i < 100:
+        docking_stations_map, investment_cost, maintenance_costs = Helpers.generate_docking_stations_map(barriers_map_w_d, docks_no, frame)
         i += 1
-    if investment_cost > max_investment_cost:
-        raise RuntimeError('Nie można wygenerować początkowego układu stacji dokujących o koszczcie mniejszym od maksymalnego')
+    if investment_cost > max_investment_cost or maintenance_costs > max_maintenance_cost:
+        raise RuntimeError('Nie można wygenerować początkowego układu stacji dokujących' +
+                           ' o koszczcie mniejszym od maksymalnego.' +
+                           ' Koszt: %.2f' % investment_cost + ', koszt utrzymania: %.2f' % maintenance_costs)
     rootLogger.info("Koszt wygenerowanego przypadku testowego: %.2f" % investment_cost)
+    rootLogger.info("Koszt utrzymania wygenerowanego przypadku: %.2f" % maintenance_costs)
     # docking_stations_map = np.load(robots_simulation_data['docking_stations_map']) if robots_simulation_data['docking_stations_map'] else None
     robots_number = robots_simulation_data['robots_number']
     sim_time = robots_simulation_data['sim_time']
