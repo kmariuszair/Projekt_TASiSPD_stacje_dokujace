@@ -21,6 +21,7 @@ class SettingsMenager:
         :return:
         """
         self.default_path_to_settings = new_path
+        self.plot_data = self.load_settings_from_file()
 
     def load_settings_from_file(self) -> dict:
         """
@@ -70,8 +71,7 @@ class SettingsMenager:
         Wczytaj ustawienia pliku PlotSaver
         :return: Słownik z ustawieniami
         """
-        data = self.load_settings_from_file()
-        return data['PlotSaver'][0]
+        return self.plot_data['PlotSaver'][0]
 
     def get_RobotsSimulation_settings(self) -> dict:
         data = self.load_settings_from_file()
