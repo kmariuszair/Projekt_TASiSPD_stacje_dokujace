@@ -101,7 +101,7 @@ class Robot:
             self.cumulative_loading_time += 1
 
     def get_actual_position(self) -> np.array:
-        return self.__state.actual_position
+        return np.copy(self.__state.actual_position)
 
     def battery_low(self) -> bool:
         return self.__state.battery_low
@@ -114,3 +114,9 @@ class Robot:
 
     def is_loading(self):
         return self.__state.is_loading
+
+    def get_battery_level(self):
+        return self.__state.battery_level
+
+    def get_battery_capacity(self):
+        return self.__state.battery_size
