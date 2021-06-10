@@ -2,16 +2,39 @@
 Implementacja modelu robota. Służy do generowania mapy.
 """
 import numpy as np
+from typing import Tuple
 
 
 class RobotSettings:
 
-    def __init__(self, battery_size, starting_battery_level, max_load, starting_position: np.array, id: int):
+    def __init__(self,
+                 battery_size: int,
+                 starting_battery_level: int,
+                 max_load: int,
+                 starting_position: np.array,
+                 id: int,
+                 size: Tuple[float, float],
+                 max_loading_speed: float,
+                 weight: float,
+                 power: float,
+                 max_speed: float,
+                 mass: float,
+                 name: str,
+                 price: int):
+
         self.battery_size = battery_size
         self.starting_battery_level = starting_battery_level
         self.max_load = max_load
         self.starting_position = starting_position
         self.id = id
+        self.size = size
+        self.max_loading_speed = max_loading_speed  # maksymalny prąd ładowania
+        self.weight = weight
+        self.power = power
+        self.max_speed = max_speed
+        self.mass = mass
+        self.name = name
+        self.price = price
 
 
 class RobotState:

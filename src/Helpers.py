@@ -1,5 +1,6 @@
 import numpy as np
 from typing import Tuple, Dict
+import src.RobotModel as RobotModel
 
 
 def diamond(r: int) -> np.array:
@@ -11,6 +12,21 @@ def diamond(r: int) -> np.array:
 def diamond_edge(r: int) -> np.array:
     return np.add.outer(*[np.r_[:r, r:-1:-1]]*2) == r
 
+def make_robot_setting_from_dict(dct):
+    return RobotModel.RobotSettings(
+                 battery_size=dct['battery_size'],
+                 starting_battery_level=dct['starting_battery_level'],
+                 max_load=dct['max_load'],
+                 starting_position=dct['starting_position'],
+                 id=dct['id'],
+                 size=dct['size'],
+                 max_loading_speed=dct['max_loading_speed'],
+                 weight=dct['weight'],
+                 power=dct['power'],
+                 max_speed=dct['max_speed'],
+                 mass=dct['mass'],
+                 name=dct['name'],
+                 price=dct['price'])
 
 def generate_docking_stations_map(allowed_positions: np.array, docks_no: int, frame_size: int, docks_params=None) -> np.array:
     """

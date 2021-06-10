@@ -11,6 +11,8 @@ import src.FileMenager as FileMenager
 import src.MapGenerator as MapGenerator
 import src.Helpers as Helpers
 import cv2
+import pickle
+
 
 def run_algorithm(path_to_settings=None):
     if path_to_settings is not None:
@@ -31,6 +33,21 @@ def run_algorithm(path_to_settings=None):
     docks_no = robots_simulation_data['docking_stations_no']
 
     org_dir = setting_menager.plot_data['PlotSaver'][0]['path_to_save_plot']
+
+    robots_details_path = robots_simulation_data["robots_settings"]
+    with open(robots_details_path) as robots_details_f:
+        robots_details = pickle.load(robots_details_f)
+        robots_details_f.close()
+
+    robots_settings = []
+    for _, robot_detail in robots_details.items():
+        robots_settings.append(Helpers.make_robot_setting_from_dict(robot_detail))
+
+    docking_stations_details_path = robots_simulation_data["docks_settings"]
+    with open(docking_stations_details_path, 'rb') as docking_stations_details_f:
+        docking_stations_details = pickle.load(docking_stations_details_f)
+        docking_stations_details_f.close()
+
 
     for docks_number in range(docks_no//2, docks_no, (docks_no - docks_no//2)//5):
 
@@ -63,7 +80,7 @@ def run_algorithm(path_to_settings=None):
         i = 0
         investment_cost, maintenance_costs = np.inf, np.inf
         while investment_cost > max_investment_cost and maintenance_costs > max_maintenance_cost and i < 10000:
-            docking_stations_map, investment_cost, maintenance_costs = Helpers.generate_docking_stations_map(barriers_map_w_d, docks_number, frame)
+            docking_stations_map, investment_cost, maintenance_costs = Helpers.generate_docking_stations_map(barriers_map_w_d, docks_number, frame, docks_params=docking_stations_details)
             i += 1
         if investment_cost > max_investment_cost or maintenance_costs > max_maintenance_cost:
             rootLogger.info('Nie można wygenerować początkowego układu stacji dokujących' +
@@ -76,7 +93,7 @@ def run_algorithm(path_to_settings=None):
             robots_number = robots_simulation_data['robots_number']
             sim_time = robots_simulation_data['sim_time']
 
-            robots_simulation = MapGenerator.TrafficMapGenerator(barriers_map, docking_stations_map, robots_number)
+            robots_simulation = MapGenerator.TrafficMapGenerator(barriers_map, docking_stations_map, robots_number, robots_swarm_predefined_settings=robots_settings)
 
             traffic_map, _, _, robot_pos_sim, cumulative_gain, cumulative_loading_times, cumulative_awaiting_times, \
             cum_dist_to_dock_when_bat_low, no_trips_to_docking_stations = robots_simulation.generate_map(sim_time)
