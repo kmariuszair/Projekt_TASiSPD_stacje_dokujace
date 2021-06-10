@@ -131,6 +131,10 @@ class TrafficMapGenerator:
             robot_pos_sim_itr = []
             for robot in self.__robots_swarm:  # aktualizacja stanu dla każdego robota
                 if robot.failure_detected():  # jeśli robot ma usterkę, to jest pomijany
+                    # Zapisanie pozycji danego robota do odpowiedniej komórki w macierzy
+                    r_pos = robot.get_actual_position()
+                    id = robot.get_id()
+                    robot_position[_, id, :] = r_pos
                     continue  # (nie zakładamy możliwości naprawy w czasie symulacji)
                 elif robot.is_loading():  # jeśli robot się ładuje
                     r_pos = robot.get_actual_position()

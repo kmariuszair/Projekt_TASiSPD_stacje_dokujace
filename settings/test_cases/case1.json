@@ -49,7 +49,7 @@
     "RobotsSimulation": [
         {
             "robots_number": 10,
-            "sim_time": 10,
+            "sim_time": 150,
             "robots_settings": null,
             "barriers_map": "maps/case1/barriers.npy",
             "docking_stations_map": "maps/case1/init_docking_stations.npy",
