@@ -13,12 +13,11 @@ class RobotSettings:
                  max_load: int,
                  starting_position: np.array,
                  id: int,
-                 size: Tuple[float, float],
+                 size: Tuple[float, float, float],  # w, l, h
                  max_loading_speed: float,
                  weight: float,
                  power: float,
                  max_speed: float,
-                 mass: float,
                  name: str,
                  price: int):
 
@@ -32,7 +31,6 @@ class RobotSettings:
         self.weight = weight
         self.power = power
         self.max_speed = max_speed
-        self.mass = mass
         self.name = name
         self.price = price
 

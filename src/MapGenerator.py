@@ -28,7 +28,27 @@ def generate_random_settings(settings_number: int, allowed_positions_map: np.arr
                                                                                              allowed_positions_map.shape[
                                                                                                  1])
         starting_position = np.array([x0, y0])
-        yield RobotModel.RobotSettings(battery_size, starting_battery_level, max_load, starting_position, id)
+        size = (np.random.uniform(500,1000), np.random.uniform(500,1000), np.random.uniform(100,500))  # w, l, h
+        max_loading_speed = np.random.uniform(10,20)
+        weight = np.random.uniform(100,300)
+        power = np.random.uniform(500,2000)
+        max_speed = np.random.uniform(5,150)  # m/min
+        name = str(id)
+        price = np.random.randint(10, 100)
+
+        yield RobotModel.RobotSettings(
+                        battery_size=battery_size,
+                        starting_battery_level=starting_battery_level,
+                        max_load=max_load,
+                        starting_position=starting_position,
+                        id=id,
+                        size=size,
+                        max_loading_speed=max_loading_speed,
+                        weight=weight,
+                        power=power,
+                        max_speed=max_speed,
+                        name=name,
+                        price=price)
 
 
 def generate_swarm(robots_number: int, allowed_positions_map: np.array,

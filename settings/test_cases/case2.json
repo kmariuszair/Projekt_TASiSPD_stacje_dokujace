@@ -1,21 +1,21 @@
 {
     "main": [
         {
-            "path_to_client_map": "maps/case5/map1a.npy",
+            "path_to_client_map": "maps/case2/map2a.npy",
             "map_shape": [
-                60,
-                60
+                20,
+                20
             ],
             "clients_number": 500,
             "max_clients_number_in_cell": 100,
-            "n_max": 1,
+            "n_max": 10,
             "p_max": 1000,
             "d_max": 2,
-            "r": 2,
+            "r": 1,
             "min_time_in_tl": 20,
             "min_time_in_lt_tl": 2,
             "time_lim": null, 
- 	 	 	"log_path": "logs/case5/subcase1a",
+ 	 	 	"log_path": "logs/case2/subcase2a",
             "iteration_lim": 10,
             "starting_solution": null, 
  	 	 	"dynamic_neighborhood": true
@@ -43,21 +43,21 @@
     "PlotSaver": [
         {
             "save_plot_to_file": true,
-            "path_to_save_plot": "plots/case5/subcase1a"
+            "path_to_save_plot": "plots/case2/subcase2a"
         }
     ],
     "RobotsSimulation": [
         {
-            "robots_number": 36,
-            "sim_time": 200,
-            "robots_settings": "details/case5/robots.dat",
-            "docks_settings": "details/case5/docks.dat",
-            "barriers_map": "maps/case5/barriers.npy",
-            "docking_stations_map": "maps/case5/init_docking_stations.npy",
-            "docking_stations_no": 1,
-            "frame": 10,
-            "max_investment_cost": 1000,
-            "max_maintenance_cost": 100
+            "robots_number": 40,
+            "sim_time": 150,
+            "robots_settings": "details/case2/robots.dat",
+            "docks_settings": "details/case2/docks.dat",
+            "barriers_map": "maps/case2/barriers.npy",
+            "docking_stations_map": "maps/case2/init_docking_stations.npy",
+            "docking_stations_no": 20,
+            "frame": 5,
+            "max_investment_cost": 3000,
+            "max_maintenance_cost": 200
         }
     ]
 }

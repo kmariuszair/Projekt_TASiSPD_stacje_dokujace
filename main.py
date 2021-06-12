@@ -35,18 +35,22 @@ def run_algorithm(path_to_settings=None):
     org_dir = setting_menager.plot_data['PlotSaver'][0]['path_to_save_plot']
 
     robots_details_path = robots_simulation_data["robots_settings"]
-    with open(robots_details_path) as robots_details_f:
-        robots_details = pickle.load(robots_details_f)
-        robots_details_f.close()
+    robots_settings = None
+    if robots_details_path is not None:
+        with open(robots_details_path, 'rb') as robots_details_f:
+            robots_details = pickle.load(robots_details_f)
+            robots_details_f.close()
 
-    robots_settings = []
-    for _, robot_detail in robots_details.items():
-        robots_settings.append(Helpers.make_robot_setting_from_dict(robot_detail))
+        robots_settings = []
+        for _, robot_detail in robots_details.items():
+            robots_settings.append(Helpers.make_robot_setting_from_dict(robot_detail))
 
     docking_stations_details_path = robots_simulation_data["docks_settings"]
-    with open(docking_stations_details_path, 'rb') as docking_stations_details_f:
-        docking_stations_details = pickle.load(docking_stations_details_f)
-        docking_stations_details_f.close()
+    docking_stations_details = None
+    if docking_stations_details_path is not None:
+        with open(docking_stations_details_path, 'rb') as docking_stations_details_f:
+            docking_stations_details = pickle.load(docking_stations_details_f)
+            docking_stations_details_f.close()
 
 
     for docks_number in range(docks_no//2, docks_no, (docks_no - docks_no//2)//5):
@@ -158,7 +162,7 @@ if __name__ == "__main__":
         # 'settings/test_cases/case1.json'  # Przypadek testowy case 1
         # 'settings/test_cases/case3.json'  # Najlepsza (chyba) szklarnia
         # 'settings/test_cases/case4.json'  # Najbardziej realna szklarnia
-        'settings/test_cases/case5.json'    # Przypadek case4 złośliwy - 1 stacja dokująca
+        'settings/test_cases/case3.json'    # Przypadek case4 złośliwy - 1 stacja dokująca
     ]
 
     itr_count = 1

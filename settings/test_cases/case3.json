@@ -50,9 +50,14 @@
         {
             "robots_number": 50,
             "sim_time": 100,
-            "robots_settings": null,
+            "robots_settings": "details/case3/robots.dat",
+            "docks_settings": "details/case3/docks.dat",
             "barriers_map": "maps/case3/barriers.npy",
-            "docking_stations_map": "maps/case3/init_docking_stations.npy"
+            "docking_stations_map": "maps/case3/init_docking_stations.npy",
+            "docking_stations_no": 18,
+            "frame": 7,
+            "max_investment_cost": 100000,
+            "max_maintenance_cost": 2000
         }
     ]
 }
