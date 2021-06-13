@@ -56,7 +56,7 @@
             "docking_stations_map": "maps/case5/init_docking_stations.npy",
             "docking_stations_no": 1,
             "frame": 10,
-            "max_investment_cost": 1000,
+            "max_investment_cost": 5100,
             "max_maintenance_cost": 100
         }
     ]

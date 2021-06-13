@@ -160,9 +160,10 @@ def run_algorithm(path_to_settings=None):
 if __name__ == "__main__":
     list_of_settings = [
         # 'settings/test_cases/case1.json'  # Przypadek testowy case 1
+        # 'settings/test_cases/case2.json'
         # 'settings/test_cases/case3.json'  # Najlepsza (chyba) szklarnia
         # 'settings/test_cases/case4.json'  # Najbardziej realna szklarnia
-        'settings/test_cases/case3.json'    # Przypadek case4 złośliwy - 1 stacja dokująca
+        'settings/test_cases/case5.json'  # Przypadek case5 złośliwy - 1 stacja dokująca
     ]
 
     itr_count = 1
