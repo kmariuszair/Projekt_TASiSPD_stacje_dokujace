@@ -81,6 +81,8 @@ def run_algorithm(path_to_settings=None):
         max_investment_cost = robots_simulation_data['max_investment_cost']
         max_maintenance_cost = robots_simulation_data['max_maintenance_cost']
         rootLogger.info("Generuję początkowe pozycje stacji dokujących")
+        if docking_stations_details is not None:
+            rootLogger.info("Używam informacji o stacjach wczytanych z pliku")
         i = 0
         investment_cost, maintenance_costs = np.inf, np.inf
         while investment_cost > max_investment_cost and maintenance_costs > max_maintenance_cost and i < 10000:
@@ -97,6 +99,8 @@ def run_algorithm(path_to_settings=None):
             robots_number = robots_simulation_data['robots_number']
             sim_time = robots_simulation_data['sim_time']
 
+            if len(robots_settings) > 0 :
+                rootLogger.info("Używam informacji o robotach wczytanych z pliku")
             robots_simulation = MapGenerator.TrafficMapGenerator(barriers_map, docking_stations_map, robots_number, robots_swarm_predefined_settings=robots_settings)
 
             traffic_map, _, _, robot_pos_sim, cumulative_gain, cumulative_loading_times, cumulative_awaiting_times, \
@@ -162,8 +166,8 @@ if __name__ == "__main__":
         # 'settings/test_cases/case1.json'  # Przypadek testowy case 1
         # 'settings/test_cases/case2.json'
         # 'settings/test_cases/case3.json'  # Najlepsza (chyba) szklarnia
-        # 'settings/test_cases/case4.json'  # Najbardziej realna szklarnia
-        'settings/test_cases/case5.json'  # Przypadek case5 złośliwy - 1 stacja dokująca
+        'settings/test_cases/case4.json'  # Najbardziej realna szklarnia
+        # 'settings/test_cases/case5.json'  # Przypadek case5 złośliwy - 1 stacja dokująca
     ]
 
     itr_count = 1
