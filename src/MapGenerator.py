@@ -121,6 +121,7 @@ class TrafficMapGenerator:
         # prędkość ładowania
         self.__docking_stations_map = docking_stations_map
         self.__paths_to_docks = {}
+        self.__paths_to_work = {}
 
         self.no_trips_to_docking_stations = 0
         self.cum_dist_to_dock_when_bat_low = 0
@@ -181,6 +182,16 @@ class TrafficMapGenerator:
                             robot.make_move(direction, 0, 0)
                             traffic_map[r_pos[0], r_pos[1]] += 1
                             loading_map[r_pos[0], r_pos[1]] += 1
+                    elif robot.get_id() in self.__paths_to_work.keys():  # jeśli robot może wrócić do miejsca pracy
+                        r_pos = robot.get_actual_position()
+                        if len(self.__paths_to_work[robot.get_id()]) > 0:
+                            direction = self.__direction_to_work(robot.get_id(), r_pos)
+                            robot.make_move(direction, 0, 0)
+                        else:
+                            print("Robot wrócił do pracy")
+                            del self.__paths_to_work[robot.get_id()]
+                        traffic_map[r_pos[0], r_pos[1]] += 1
+                        loading_map[r_pos[0], r_pos[1]] += 1
                     else:  # jeśli robot jest sprawny
                         r_pos = robot.get_actual_position()
                         direction = self.__generate_allowed_move(r_pos)
@@ -234,10 +245,22 @@ class TrafficMapGenerator:
         if robot_id not in self.__paths_to_docks.keys():
             # odwrotna indeksacja, najpierw podany numer kolumny a potem wiersza, wartości też zwracane w odwrotnej indeksacji
             self.__paths_to_docks[robot_id] = self.__bfs((robot_position[1], robot_position[0]))
+            self.__paths_to_work[robot_id] = deepcopy(self.__paths_to_docks[robot_id])
+            self.__paths_to_work[robot_id].reverse()
             self.no_trips_to_docking_stations += 1
             self.cum_dist_to_dock_when_bat_low += len(self.__paths_to_docks[robot_id])
 
         path = self.__paths_to_docks[robot_id]
+        try:
+            next_point = path.pop(
+                0)  # może się zdarzyć 'pop from empty list', gdy robot będzie już na miejscu stacji dokującej
+            xdiff, ydiff = next_point[1] - robot_position[0], next_point[0] - robot_position[1]  # coś nie tak
+            return np.array([xdiff, ydiff])
+        except IndexError:
+            return np.array([0, 0])
+
+    def __direction_to_work(self, robot_id: int, robot_position: np.array):
+        path = self.__paths_to_work[robot_id]
         try:
             next_point = path.pop(
                 0)  # może się zdarzyć 'pop from empty list', gdy robot będzie już na miejscu stacji dokującej

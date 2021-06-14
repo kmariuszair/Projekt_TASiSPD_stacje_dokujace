@@ -62,7 +62,7 @@ class RobotState:
             """
             Robot w czasie normalnego działania
             """
-            self.battery_level -= self.actual_load
+            self.battery_level -= self.actual_load//10 + 1
             self.battery_level += loading_speed if self.battery_level + loading_speed < self.battery_size else \
                 self.battery_size - self.battery_level
 
@@ -85,7 +85,7 @@ class RobotState:
             """
             # obliczanie najbardziej optymalnego kierunku ruchu do najbliższej stacji dokującej odbywać się będzie
             # na wyższym poziomie, ponieważ potrzebny jest dostęp do mapy
-            self.battery_level -= self.actual_load
+            self.battery_level -= self.actual_load//20 + 1 if np.linalg.norm(direction) > 0 else 0
             self.actual_position += direction
             self.is_loading = True if loading_speed > 0 and self.battery_level < self.battery_size else False
 

@@ -52,8 +52,7 @@ def run_algorithm(path_to_settings=None):
             docking_stations_details = pickle.load(docking_stations_details_f)
             docking_stations_details_f.close()
 
-
-    for docks_number in range(docks_no//2, docks_no, (docks_no - docks_no//2)//5):
+    for docks_number in range(max(docks_no//2, 1), max(docks_no, 2), max((docks_no - docks_no//2)//5, 1)):
 
         setting_menager.plot_data['PlotSaver'][0]['path_to_save_plot'] = org_dir + '/docks_no_{}'.format(docks_number)
 
@@ -163,11 +162,11 @@ def run_algorithm(path_to_settings=None):
 
 if __name__ == "__main__":
     list_of_settings = [
-        # 'settings/test_cases/case1.json'  # Przypadek testowy case 1
-        # 'settings/test_cases/case2.json'
-        # 'settings/test_cases/case3.json'  # Najlepsza (chyba) szklarnia
-        'settings/test_cases/case4.json'  # Najbardziej realna szklarnia
-        # 'settings/test_cases/case5.json'  # Przypadek case5 złośliwy - 1 stacja dokująca
+        'settings/test_cases/case1.json',  # Przypadek testowy case 1
+        'settings/test_cases/case2.json',
+        'settings/test_cases/case3.json'  # Najlepsza (chyba) szklarnia
+        # 'settings/test_cases/case4.json',  # Najbardziej realna szklarnia
+        # 'settings/test_cases/case5.json'    # Przypadek case5 złośliwy - 1 stacja dokująca
     ]
 
     itr_count = 1
