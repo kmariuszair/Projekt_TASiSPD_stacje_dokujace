@@ -99,7 +99,7 @@ def run_algorithm(path_to_settings=None):
             robots_number = robots_simulation_data['robots_number']
             sim_time = robots_simulation_data['sim_time']
 
-            if len(robots_settings) > 0 :
+            if robots_settings is not None:
                 rootLogger.info("Używam informacji o robotach wczytanych z pliku")
             robots_simulation = MapGenerator.TrafficMapGenerator(barriers_map, docking_stations_map, robots_number, robots_swarm_predefined_settings=robots_settings)
 
