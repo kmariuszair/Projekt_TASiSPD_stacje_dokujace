@@ -16,7 +16,7 @@
             "min_time_in_lt_tl": 2,
             "time_lim": null, 
  	 	 	"log_path": "logs/case5/subcase1a",
-            "iteration_lim": 10,
+            "iteration_lim": 50,
             "starting_solution": null, 
  	 	 	"dynamic_neighborhood": true
         }
