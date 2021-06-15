@@ -164,9 +164,9 @@ if __name__ == "__main__":
     list_of_settings = [
         'settings/test_cases/case1.json',
         'settings/test_cases/case2.json',
-        'settings/test_cases/case3.json'
-
-
+        'settings/test_cases/case3.json',
+        'settings/test_cases/case4.json'
+        'settings/test_cases/case5.json'
     ]
 
     itr_count = 1

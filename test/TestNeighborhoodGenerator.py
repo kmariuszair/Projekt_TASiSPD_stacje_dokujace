@@ -8,7 +8,7 @@ class TestNeighborhoodGenerator(unittest.TestCase):
 
     def test_case_from_f_description_example(self):
         r = 1
-        parcel_locker_matrix = np.array([[0, 1, 0, 0],
+        docks_matrix = np.array([[0, 1, 0, 0],
                                          [0, 0, 1, 0],
                                          [0, 0, 0, 0]])
 
@@ -49,7 +49,7 @@ class TestNeighborhoodGenerator(unittest.TestCase):
 
         expected = [n1, n2, n3, n4,
                     n5, n6, n7, n8, n9, n10, n11]
-        result = [n for n in src.NeighborhoodGenerator.neighborhood_generator(parcel_locker_matrix, r)]
+        result = [n for n in src.NeighborhoodGenerator.neighborhood_generator(docks_matrix, r)]
 
 
 
@@ -71,7 +71,7 @@ class TestNeighborhoodGenerator(unittest.TestCase):
 
     def test_locked_pl_more_r(self):
         r = 2
-        parcel_locker_matrix = np.array([[1, 1, 1, 0],
+        docks_matrix = np.array([[1, 1, 1, 0],
                                          [1, 1, 1, 0],
                                          [1, 1, 0, 0]])
 
@@ -225,7 +225,7 @@ class TestNeighborhoodGenerator(unittest.TestCase):
             ])
         ]
 
-        result = [n for n in src.NeighborhoodGenerator.neighborhood_generator(parcel_locker_matrix, r)]
+        result = [n for n in src.NeighborhoodGenerator.neighborhood_generator(docks_matrix, r)]
 
         for n in expected:
             is_n_in_r_res = False
