@@ -2,35 +2,6 @@ import numpy as np
 
 
 def neighborhood_generator(parcel_locker_matrix: np.array, r: int):
-    """
-    Generator w języku python (możemy iterować po tej funkcji - np. [n for n in neighborhood_generator(m,r)] utworzy
-    listę z sąsiadzami znajdującymi się w promieniu r od rozwiązania m)
-
-    Kolejność generowanych elementów z sąsiedztwa nie ma znaczenia.
-    Zwracane elementy mogą się nawet powtarzać, ale lepiej ominąć takie sytuacje
-    ponieważ traci się moc obliczeniową.
-
-    Przykład działania:
-
-    Dla rozwiązania początkowego:
-    |0 1 0 0|
-    |0 0 1 0|
-    |0 0 0 0|
-    i promienia 1 r=1
-
-    Generowane są w dowolnej kolejności następujące elementy:
-    |1 0 0 0| |0 0 1 0| |0 0 0 0| |0 0 0 0|
-    |0 0 1 0| |0 0 1 0| |0 1 1 0| |1 0 1 0|
-    |0 0 0 0| |0 0 0 0| |0 0 0 0| |0 0 0 0|
-
-    |0 1 1 0| |0 1 0 1| |0 1 0 0| |0 1 0 0| |0 1 0 0| |0 1 0 0| |0 1 0 0|
-    |0 0 0 0| |0 0 0 0| |0 0 0 1| |0 0 0 0| |0 0 0 0| |0 0 0 0| |0 1 0 0|
-    |0 0 0 0| |0 0 0 0| |0 0 0 0| |0 0 0 1| |0 0 1 0| |0 1 0 0| |0 0 0 0|
-
-    :param parcel_locker_matrix: macierz stacji dokujących
-    :param r:
-    :return neighbor:
-    """
     x_size = parcel_locker_matrix.shape[0]
     y_size = parcel_locker_matrix.shape[1]
 

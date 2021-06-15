@@ -71,7 +71,7 @@ class TestFunctions(unittest.TestCase):
                 self.assertTrue(501 <= setting.battery_size < 1000)
                 self.assertTrue(np.floor(0.5*setting.battery_size) <= setting.starting_battery_level < setting.battery_size)
                 self.assertTrue(25 <= setting.max_load < 50)
-                self.assertTrue(allowed_positions_map[setting.starting_position[0], setting.starting_position[1]]==0)  # 0 oznacza pozycję dozwoloną
+                self.assertTrue(allowed_positions_map[setting.starting_position[0], setting.starting_position[1]]==0)
                 settings_list.append(setting)
 
     def test_generate_swarm__random(self):
@@ -82,7 +82,7 @@ class TestFunctions(unittest.TestCase):
             self.assertTrue(np.floor(0.5*robot._Robot__settings.battery_size) <= robot._Robot__settings.starting_battery_level < robot._Robot__settings.battery_size)
             self.assertTrue(25 <= robot._Robot__settings.max_load < 50)
             self.assertTrue(allowed_positions_map[robot._Robot__settings.starting_position[0],
-                                                  robot._Robot__settings.starting_position[1]] == 0)  # 0 oznacza pozycję dozwoloną
+                                                  robot._Robot__settings.starting_position[1]] == 0)
 
     def test_generate_swarm__given_settings_list(self):
         settings_list = list()
@@ -106,7 +106,7 @@ class TestRobotsSwarm(unittest.TestCase):
             self.assertTrue(25 <= robot._Robot__settings.max_load < 50)
             self.assertTrue(allowed_positions_map[
                                 robot._Robot__settings.starting_position[0], robot._Robot__settings.starting_position[
-                                    1]] == 0)  # 0 oznacza pozycję dozwoloną
+                                    1]] == 0)
 
     def test_init_given_settings(self):
         settings_list = list()
@@ -127,7 +127,7 @@ class TestRobotsSwarm(unittest.TestCase):
             self.assertTrue(25 <= robot._Robot__settings.max_load < 50)
             self.assertTrue(allowed_positions_map[
                                 robot._Robot__settings.starting_position[0], robot._Robot__settings.starting_position[
-                                    1]] == 0)  # 0 oznacza pozycję dozwoloną
+                                    1]] == 0)
 
 
 class TestTrafficMapGenerator(unittest.TestCase):
@@ -161,14 +161,14 @@ class TestTrafficMapGenerator(unittest.TestCase):
                 robot_pos = robot.get_actual_position()
                 direction = traffic_map_generator._TrafficMapGenerator__direction_to_nearest_dock(robot_id, robot_pos)
 
-                # sprawdzam czy kierunek jest w zakresie iloczynu kartezjańskiego zbiorów <-1, 1>X<-1, 1>
+
                 self.assertGreaterEqual(direction[0], -1)
                 self.assertLessEqual(direction[0], 1)
 
                 self.assertGreaterEqual(direction[1], -1)
                 self.assertLessEqual(direction[1], 1)
 
-                # sprawdzam, czy wygenerowała się lista punktów reprezentująca drogę do najbliższej stacji dokującej
+
                 self.assertIsNotNone(traffic_map_generator._TrafficMapGenerator__paths_to_docks[robot_id])
 
     def test_generate_map(self):

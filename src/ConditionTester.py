@@ -6,9 +6,6 @@ import src.Helpers as Helpers
 
 
 class ConditionTesterInterface(ABC):
-    """
-    Interfejs klasy sprawdzającej ograniczenia
-    """
 
     @abstractmethod
     def __init__(self,
@@ -27,9 +24,7 @@ class ConditionTesterInterface(ABC):
 
 
 class OneConditionTester(ConditionTesterInterface):
-    """
-    Klasa realizująca interfejs klasy sprawdzającej ograniczenia
-    """
+
 
     def __init__(self,
                  p_max: int,
@@ -38,12 +33,7 @@ class OneConditionTester(ConditionTesterInterface):
                  clients_map: np.array,
                  banned_positions: np.array,
                  frame: int):
-        """
-        :param p_max: maksymalna liczba klientów w zasięgu działania stacji dokującej
-        :param d_max: zasięg działania stacji dokujących
-        :param clients_map: macierz zawierająca informacje o położeniu klientów
-        :param banned_positions: mapa pozycji zabronionych
-        """
+
         self.__p_max = p_max
         self.__d_max = d_max
         self.__clients_map = clients_map
@@ -57,33 +47,18 @@ class OneConditionTester(ConditionTesterInterface):
         self.__ban_matrix = self.__create_ban_matrix()
 
     def is_solution_allowed(self, solution: np.array) -> bool:
-        """
-        Metoda sprawdzająca, czy dane rozwiązanie spełnia ograniczenia.
 
-        :param solution: rozwiązanie do przetestowania pod względem ograniczeń
-        :return [bool]: odpowiedź na pytanie, czy dane rozwiązanie spełnia ograniczenia
-        """
 
         return (not np.any(solution[self.__ban_matrix])) and (not np.any(solution[self.__banned_positions])) and (not np.any(solution[self.frame:-self.frame, self.frame:-self.frame]))
 
     def __create_ban_matrix(self) -> np.array:
-        """
-        Tworzy macierz logiczną, gdzie True oznacza miejsca, gdzie nie można postawić stacji dokujących
-        :return ban_matrix: macierz wskazująca gdzie nie można postawić stacji dokujących
-        """
+
         ban_matrix = np.zeros(self.__map_shape, dtype=bool)
         for index, value in np.ndenumerate(ban_matrix):
             ban_matrix[index] = self.__are_to_many_clients_in_area(index)
         return ban_matrix
 
     def __are_to_many_clients_in_area(self, pl_coords: Tuple[int, int]) -> bool:
-        """
-        FUnkcja sprawdzająca, czy w zasięgu działa stacji dokujących o współrzędnych pl_coords
-        nie ma zbyt wielu klientów.
-
-        :param pl_coords: współrzędne stacji dokujących
-        :return [bool]: czy w zasięgu stacji dokujących nie ma zbyt wielu klientów
-        """
 
         y, x = pl_coords
         r = self.__d_max

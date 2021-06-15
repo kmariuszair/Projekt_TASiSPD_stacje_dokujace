@@ -6,9 +6,6 @@ import src.Helpers as Helpers
 
 
 class StartingSolutionGenInterface(ABC):
-    """
-    Interfejs generatora rozwiązania początkowego
-    """
 
     @abstractmethod
     def __init__(self,
@@ -26,41 +23,6 @@ class StartingSolutionGenInterface(ABC):
 
 
 class StartingSolutionGen(StartingSolutionGenInterface):
-    """
-    Implementacja interfejsu generatora.
-
-    Idea działania:
-
-    Otrzymujemy macierz z ilością klientów w każdej komórce.
-    Tworzymy drugą macierz wypełnioną zerami o takich samych rozmiarach
-    Nakładamy maski na tę drugą macierz
-    Maski składają się z kul w naszej metryce o promieniu 2*D_max+1 wypełnionych jedynkami
-    Środek maski odpowiada pozycji kratki z klientami dla której są nakładane
-    Gdzie maski się pokrywają, tam wartość drugiej macierzy jest sumą tych masek
-
-    Przykład dla D_max=2:
-    Macierz wejściowa:
-    |3 0 0 0 2|
-    |0 0 1 0 0|
-    |0 2 0 0 0|
-    |0 0 0 1 1|
-
-    Macierz nałożonych masek: - kształt masek zależy od metryki
-    |1 2 3 2 1|
-    |2 3 2 2 2|
-    |2 2 3 4 2|
-    |1 2 3 2 2|
-
-    Algorytm wyszukiwania rozwiązania początkowego działa tak,
-    że wybierana jest komórka z największą wartością (jeśli jest kilka to sposób wyboru jest bez znaczenia)
-    Następnie zerowane są wszystkie komórki w odległości D_max od danej komórki (w metryce nakładania maski)
-    Tak uzyskaną macierz ponownie wkładam do funkcji i otrzymujemy kolejne położenie stacji dokującej
-
-    Kryterium stopu: skończyły się stacje dokujące
-
-    Jeśli pozostały stacje dokujące, a miejsca do ich umieszczenia nie ma (wszystkie pozostałe komórki
-    nie spełniają ograniczeń) to rzucany jest wyjątek, że nie można wygenerować rozwiązania początkowego
-    """
 
     def __init__(self,
                  n_max: int,
@@ -82,12 +44,7 @@ class StartingSolutionGen(StartingSolutionGenInterface):
         self.__diamond_matrix = Helpers.diamond(self.__d_max)
 
     def generate(self) -> np.array:
-        """
-        Metoda generująca rozwiązanie początkowe.
-        # jeśli zmieniamy nasze ograniczenia to musimy zmodyfikować ConditionTester oraz tę klasę !!!
 
-        :return starting_solution: rozwiązanie początkowe spełniające ograniczenia
-        """
         self.__temp_clients_map = np.copy(self.__client_map)
         starting_solution = np.zeros(self.__map_shape, dtype='int32')
 
@@ -96,17 +53,17 @@ class StartingSolutionGen(StartingSolutionGenInterface):
         while available_pl > 0:
             self.__make_mask_matrix()
             place_found = False
-            # iteruje po komórkach o wartościach od największych do najmniejszych, aż nie znajdzie optymalnego miejsca
+
             while not place_found:
-                # jeśli przeszukano wszystkie pozycje i nie znaleziono miejsca
+
                 if np.max(self.__mask_matrix) == -1:
                     raise RuntimeError("Can't generate starting solution")
-                # znajduje pierwsze maksimum w macierzy masek
+
                 max_ind = np.unravel_index(np.argmax(self.__mask_matrix, axis=None), self.__mask_matrix.shape)
 
                 if self.__check_client_number_in_pl_range(max_ind) > self.__p_max or starting_solution[max_ind] == 1:
-                    # wstawiam -1, żeby maksimum mi nie znajdowało tej komórki (zabraniam ustawienia stacji dokujących
-                    # w to miejsce) jeśli max to będzie -1, to wtedy generator kończy działanie
+
+
                     self.__mask_matrix[max_ind] = -1
                 else:
                     starting_solution[max_ind] = 1
@@ -117,12 +74,7 @@ class StartingSolutionGen(StartingSolutionGenInterface):
         return starting_solution
 
     def __reduce_temp_clients_map(self, cell_coord: Tuple[int, int]):
-        """
-        Usuwa klientów w tymczasowej mapie po wstawieniu w okolicy stacji dokujących
 
-        :param cell_coord: współrzędne punktu, którego otoczenia w mapie klientów ma być zredukowane
-        :return:
-        """
         y, x = cell_coord
         r = self.__d_max
 
@@ -142,11 +94,7 @@ class StartingSolutionGen(StartingSolutionGenInterface):
         self.__temp_clients_map[y_min:y_max, x_min:x_max] = temp_temp_clients_map
 
     def __make_mask_matrix(self):
-        """
-        Funkcja tworząca macierz maskową.
 
-        :return: None
-        """
         self.__mask_matrix = np.zeros(self.__map_shape)
         r = self.__d_max
         for index, value in np.ndenumerate(self.__temp_clients_map):
@@ -169,12 +117,7 @@ class StartingSolutionGen(StartingSolutionGenInterface):
                 self.__mask_matrix[y_min:y_max, x_min:x_max] = temp_mask
 
     def __check_client_number_in_pl_range(self, pl_coords: Tuple[int, int]) -> int:
-        """
-        Liczy liczbę klientów w zasięgu danej stacji dokującej
 
-        :param pl_coords: współrzędne stacji dokującej
-        :return clients_number: liczba klientów w zasięgu danej stacji dokującej
-        """
         y, x = pl_coords
         r = self.__d_max
 

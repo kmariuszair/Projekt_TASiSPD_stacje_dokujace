@@ -2,10 +2,6 @@ import matplotlib.pyplot as plt
 from matplotlib import animation
 from src.DataCollectorPlotter import setting_menager
 from src.FileMenager import is_path_to_file_exists, generate_path_to_file
-"""
-    Jest to zbiór funckji odpowiedzialnych za zapis uzyskanych wykresów i animacji do plików.
-    Zapis i ścieżka zapisu jest zdefiniowana w pliku konfiguracyjnym.
-"""
 
 
 def save_plot_to_file(plt_to_save: plt.plot, file_name):

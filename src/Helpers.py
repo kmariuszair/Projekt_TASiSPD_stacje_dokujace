@@ -4,8 +4,8 @@ import src.RobotModel as RobotModel
 
 
 def diamond(r: int) -> np.array:
-    # *...*2 sprawia, że dany argument jest przekazywany jako pierwszy i
-    # drugi argument funkcji
+
+
     return np.add.outer(*[np.r_[:r, r:-1:-1]]*2) >= r
 
 
@@ -28,11 +28,7 @@ def make_robot_setting_from_dict(dct):
                  price=dct['price'])
 
 def generate_docking_stations_map(allowed_positions: np.array, docks_no: int, frame_size: int, docks_params=None) -> np.array:
-    """
-    Generacja mapy stacji dokujących
 
-    TESTED ✓
-    """
     map_shape = allowed_positions.shape
     map = np.zeros(map_shape)
     investment_cost = 0
@@ -46,10 +42,10 @@ def generate_docking_stations_map(allowed_positions: np.array, docks_no: int, fr
     else:
         for _ in range(docks_no):
             written = False
-            # if dock_param:
-            #     map = np.zeros(map_shape)
-            #     investment_cost = 0
-            #     maintenance_costs = 0
+
+
+
+
             while not written:
                 tst = np.random.randint(0, 4)
                 if tst == 0:
@@ -123,10 +119,7 @@ def mix_docking_stations_map(old_map: np.array, frame_size: int) -> np.array:
 
 
 def create_docking_station_map_based_on_docks_set(map_shape: Tuple[int, int], dset: Dict[int, int], frame_size: int) -> np.array:
-    """
-    Generowanie mapy stacji na podstawie zadanego ich zbioru.
-    :dset: zbiór (słownik) mapujący szybkość ładowania stacji na ich ilość
-    """
+
     map = np.zeros(map_shape)
     for el in dset.keys():
         if el == 0:

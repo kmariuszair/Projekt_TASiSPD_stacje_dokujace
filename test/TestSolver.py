@@ -285,7 +285,7 @@ class TestSolver(unittest.TestCase):
         self.assertTrue(test_solver._Solver__is_in_tabu_list(x_new)[0])
 
     def test_is_in_tabu_true_two_in_tabu(self):
-        # ten przypadek nie powinien się przydarzyć w przebiegu algorytmu przy przyjętym sąsiedztwie
+
         pl_map = np.array([
             [0, 0, 0],
             [0, 0, 0],
@@ -568,7 +568,7 @@ class TestSolver(unittest.TestCase):
         self.assertTrue(is_in_long_tabu)
 
     def test_is_in_long_term_tabu_true_two_in_tabu(self):
-        # ten przypadek nie powinien się przydarzyć w przebiegu algorytmu przy przyjętym sąsiedztwie
+
         pl_map = np.array([
             [0, 0, 0],
             [0, 0, 0],

@@ -4,68 +4,51 @@ import logging
 
 from src.PlotSaver import save_plot_to_file
 import src.Helpers as Helpers
-"""
-    Klasa służąca do oblicznia wykorzystania stacji dokujących oraz reprezentacji graficznej obciążenia
-"""
 
 
 class SolutionUtilization:
 
     def __init__(self, _client_map: np.array, _solution: np.array, _p_max: int, _d_max: int):
-        """
-        :param _client_map: Mapa klientów
-        :param _solution: Rozmieszczenie stacji dokujących
-        :param _p_max: Maksymalna pojemność pojedynczego stacji dokującej
-        :param _d_max: Zasięg działania stacji dokującej
-        """
+
         self.__client_map = np.copy(_client_map)
         self.__plt_map = np.copy(_solution)
         self.__p_max = _p_max
         self.__d_max = _d_max
         self.__map_shape = self.__client_map.shape
-        # Macierz reprezentująca czy klient jest w strefie działania stacji dokujących
+
         self.__client_within_plt_zone = np.zeros(self.__map_shape)
-        # Macierz reprezentująca ile klientów ma w zasięgu działania dana stacja dokująca
-        # 1 - Klient jest W zasiegu stacji dokujących
-        # 0 - Klient jest POZA zasiegiem stacji dokujących
+
+
+
         self.__plt_utilisation = np.zeros(self.__map_shape)
-        # Macierz reprezentująca ile klientów ma stację dokującą bez ograniczeń
+
         self.__plt_utilisation_without_d_max = np.zeros(self.__map_shape)
 
-        # Lista przedstawiająca średnią odległość komórki od stacji dokujących w zależności od ilości klientów w tej komórce.
-        # Liczba klientów jest indeksem
+
+
         self.__av_distance_for_clients_cell = dict()
-        # Średnia liczba klientów w zależności od odległosci od stacji dokujących
+
         self.__av_clients_at_given_range = dict()
-        # Macierz odległości do najbliższej stacji dokujących. Wartość komórki określa jej oddalenie od najbliższej
-        # stacji dokującej
+
+
         self.__distance_matrix = np.zeros(self.__map_shape)
 
-        # Wygeneruj dla danych wejściowych macierze obciążenia stacji dokujących, stref działania itp
+
         self.__calculate()
 
     def calculate_utilization_of_solution(self, _client_map: np.array, _plt_map: np.array, _p_max: int, _d_max: int):
-        """
-        Funckja służaca do ponownego generowania rozwiązania zużycia stacji dokujących
-        :param _client_map: Mapa klientów
-        :param _plt_map: Rozmieszczenie stacji dokujących
-        :param _p_max: Maksymalna pojemność pojedynczej stacji dokującej
-        :param _d_max: Maksymalny zasięg działania stacji dokujących
-        :return: Funkcja wewnętrzenie zapisuje rozwiązanie pod zmienna self.__plt_utilisation_without_d_max
-        """
+
         self.__client_map = np.copy(_client_map).T
         self.__plt_map = np.copy(_plt_map).T
         self.__p_max = _p_max
         self.__d_max = _d_max
         self.__map_shape = self.__client_map.shape
         self.__plt_utilisation_without_d_max = np.zeros(self.__map_shape).T
-        # Przelicz ponownie rozwiązanie dla nowych danych wejściowych
+
         self.__calculate()
 
     def plot_solution_utilization(self):
-        """
-            Funkcja reprezentująca wykorzystanie stacji dokujących w zasięgu ich działania
-        """
+
         fig = plt.figure(figsize=(16, 12))
         ax = fig.add_subplot(111)
         im = ax.imshow(self.__plt_utilisation, origin='lower', interpolation='None', cmap='Reds')
@@ -83,9 +66,7 @@ class SolutionUtilization:
         plt.show()
 
     def plot_clients_within_plt_zone(self):
-        """
-            Funkcja służąca do reprezentacji graficznej obszaru obsługiwanego przez stacje dokujące
-        """
+
         fig = plt.figure(figsize=(16, 12))
         ax = fig.add_subplot(111)
         im = ax.imshow(self.__client_within_plt_zone, origin='lower', interpolation='None', cmap='cool')
@@ -102,9 +83,7 @@ class SolutionUtilization:
         plt.show()
 
     def plot_solution_utilization_without_d_max(self):
-        """
-            Funkcja reprezentująca wykorzystanie stacji dokujących BEZ zasięgu ich działania
-        """
+
         fig = plt.figure(figsize=(16, 12))
         ax = fig.add_subplot(111)
         im = ax.imshow(self.__plt_utilisation_without_d_max, origin='lower', interpolation='None', cmap='YlOrBr')
@@ -122,27 +101,16 @@ class SolutionUtilization:
         plt.show()
 
     def get_plt_utilization_without_d_max(self):
-        """
-        Funkcja wzracająca kopię mapy wykorzystania stacji dokujących bez ograniczenia odległościowego
-        :return: Macierz wykorzystania stacji dokujących bez ograniczenia odległościowego
-        """
+
         return np.copy(self.__plt_utilisation_without_d_max)
 
     def get_plt_utilization(self):
-        """
-        Funkcja wzracająca kopię mapy wykorzystania stacji dokujących
-        :return: Macierz wykorzystania stacji dokujących
-        """
+
         return np.copy(self.__plt_utilisation)
 
     def print_solution_utilization_data(self):
-        """
-            Funkcja wypisująca w konsoli informacje zebrane podczas działania algorytmu
-            Reprezentowane są następujące informacje:
-                - Ile klientow nie ma dostępu do stacji dokujących, ile stanowi to całość populacji
-                - Mediana, średnie obciążenie stacji dokujących, zużycie całkowitej pojemności
-        """
-        #  Wyświetlanie informacji o klientach bez dostępu do stacji dokujących
+
+
         logging.info('>------      Informacje o uzyskanym rozwiązaniu      ------<')
         total_clients_without_plt = 0
         zones_without_plt = 0
@@ -158,7 +126,7 @@ class SolutionUtilization:
                                                                                         total_clients,
                                                                                         total_client_percent)
         logging.info(total_client_info)
-        #  Sekcja odpowiedzialna za wyświetlania informacji o obciążeniach stacji dokujących
+
         logging.info(' ')
         total_plt_load_average = np.sum(self.__plt_utilisation) / np.sum(self.__plt_map)
         logging.info('Średnie obciążenie stacji dokujących wynosi: {} / {}'.format(total_plt_load_average, self.__p_max))
@@ -172,17 +140,17 @@ class SolutionUtilization:
 
     def plot_av_clients_at_given_range(self):
         fig, ax = plt.subplots(figsize=(16, 9))
-        # Sortowanie według łacznego czasu wykonania
-        # sorted_l = dict(sorted(self.__av_clients_at_given_range.items(), key=lambda x: x[1], reverse=True))
+
+
         sorted_l = self.__av_clients_at_given_range
         dist = sorted_l.keys()
         av_clients = sorted_l.values()
-        # Generowanie wykresu
+
         y_pos = np.arange(len(dist))
         ax.barh(y_pos, av_clients, align='center')
         ax.set_yticks(y_pos)
         ax.set_yticklabels(dist)
-        ax.invert_yaxis()  # labels read top-to-bottom
+        ax.invert_yaxis()
         ax.set_xlabel('Średnia liczba klientów w danej komórce')
         ax.set_ylabel('Odległość do najbliższej stacji dokującej')
         ax.set_title('Średnia ilość klientów w danej komórce w zależności od odległości do stacji dokującej')
@@ -191,17 +159,17 @@ class SolutionUtilization:
 
     def plot_av_dist_for_cell_with_given_cliens(self):
         fig, ax = plt.subplots(figsize=(16, 9))
-        # Sortowanie według łacznego czasu wykonania
-        # sorted_l = dict(sorted(self.__av_distance_for_clients_cell.items(), key=lambda x: x[1], reverse=True))
+
+
         sorted_l = self.__av_distance_for_clients_cell
         clients_no = sorted_l.keys()
         av_dist = sorted_l.values()
-        # Generowanie wykresu
+
         y_pos = np.arange(len(clients_no))
         ax.barh(y_pos, av_dist, align='center')
         ax.set_yticks(y_pos)
         ax.set_yticklabels(clients_no)
-        ax.invert_yaxis()  # labels read top-to-bottom
+        ax.invert_yaxis()
         ax.set_xlabel('Średnia odległość do najbliższej stacji dokującej')
         ax.set_ylabel('Ilość klientów w danej komórce')
         ax.set_title('Średnia odległość do najbliższej stacji dokującej w zależności od ilości klientów w danej komórce')
@@ -209,13 +177,11 @@ class SolutionUtilization:
         plt.show()
 
     def __calculate(self):
-        """
-            Funkcja wewnętrzna obliczająca macierze wykrozsytanie stacji dokujących oraz stref ich działania
-        """
+
         temp_client_map = np.copy(self.__client_map)
         self.__plt_utilisation_without_d_max = np.zeros(self.__map_shape)
         radius_of_plt = 0
-        # Zakończ jak braknie klientów
+
         while (not np.all((self.__client_map == 0))) and (not np.all((self.__plt_map == 0))):
             for i in range(0, np.max(self.__client_map) + 1):
                 for x_plt in range(0, self.__map_shape[0]):
@@ -228,15 +194,13 @@ class SolutionUtilization:
                 raise ValueError('Prosimy skontaktować sie z biurem obłsugi klienta :) ')
         self.__client_map = np.copy(temp_client_map)
 
-        # trzeba zachować kolejność wywołań
+
         self.__calculate_distance_matrix()
         self.__calculate_av_clients()
         self.__calculate_av_distances()
 
     def __distribute_client_to_plt(self, x_plt: int, y_plt: int, radius: int):
-        """
-            Funckja przydzielające klientów do każdego stacji dokujących
-        """
+
         x_start = x_plt - radius
         if x_start < 0:
             x_start = 0
@@ -259,14 +223,11 @@ class SolutionUtilization:
                         total_clients_per_plt = self.__plt_utilisation_without_d_max[x_plt][y_plt] + clients
                         self.__plt_utilisation_without_d_max[x_plt][y_plt] = total_clients_per_plt
                         self.__client_map[x][y] -= clients
-                        if radius <= self.__d_max:  # Uwględnie zasiegu działania stacji dokujących
+                        if radius <= self.__d_max:
                             self.__plt_utilisation[x_plt][y_plt] = total_clients_per_plt
 
     def __calculate_distance_matrix(self):
-        """
-        Funkcja obliczająca macierz self.__distance_matrix.
-        :return:
-        """
+
         diamond_list = [Helpers.diamond_edge(r) for r in range(self.__map_shape[0] + self.__map_shape[1])]
         for index, _ in np.ndenumerate(self.__distance_matrix):
             y, x = index
@@ -289,11 +250,7 @@ class SolutionUtilization:
                     break
 
     def __calculate_av_distances(self):
-        """
-        Funkcja licząca średnią odległość od stacji dokujących dla komórek o zadanej ilości klientów.
-        Modyfikuje self.__av_distance_for_clients_cell
-        :return:
-        """
+
         max_clients = int(np.max(self.__client_map))
         for clients_no in range(max_clients + 1):
             mask = self.__client_map == clients_no
@@ -301,11 +258,7 @@ class SolutionUtilization:
                 np.sum(self.__distance_matrix[mask]) / np.count_nonzero(mask) if np.any(mask) else 0
 
     def __calculate_av_clients(self):
-        """
-        Funkcja licząca średnią ilość klientów w zadanej odległości od najbliższego stacji dokujących.
-        Modyfikuje self.__av_clients_at_given_range.
-        :return:
-        """
+
         max_dist = int(np.max(self.__distance_matrix))
         for dist in range(max_dist + 1):
             mask = self.__distance_matrix == dist

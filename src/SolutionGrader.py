@@ -4,18 +4,13 @@ from typing import Tuple
 
 
 class SolutionGraderInterface(ABC):
-    """
-    Klasa reprezentująca interfejs oceniania otrzymanego rozwiązania
-    """
     @abstractmethod
     def grade_solution(self, solution: np.array, clients_map: np.array):
         raise NotImplementedError
 
 
 class SolutionGrader(SolutionGraderInterface):
-    """
-    Klasa zawierająca funkcjonalności związane z oceną rozwiązania ostatecznego pod względem dodatkowych kryteriów.
-    """
+
     def __init__(self,
                  clients_map: np.array,
                  solution: np.array):
@@ -25,13 +20,7 @@ class SolutionGrader(SolutionGraderInterface):
         self.__map_shape = self.__clients_map.shape
 
     def grade_solution(self, solution: np.array, clients_map: np.array):
-        """
-        Funkcja oceniająca rozwiązanie pod dodatkowym kryterium.
 
-        :param solution: rozwiązanie do oceny pod dodatkowym kryterium
-        :param clients_map: mapa klientów służąca do oceny
-        :return:
-        """
         self.__solution = solution
         self.__clients_map = clients_map
 
@@ -40,12 +29,7 @@ class SolutionGrader(SolutionGraderInterface):
         return np.var(clients_per_pl[clients_per_pl > 0])
 
     def __map_clients_to_nearest_pl(self) -> np.array:
-        """
-        Funkcja licząca ile klientów ma najbliżej do danej stacji dokującej.
 
-        :return nearest_clients_no: macierz, gdzie w miejscu stacji dokujących wpisana jest ilość klientów,
-                                    którzy mają do niego najbliżej
-        """
         nearest_clients_no = np.zeros(self.__map_shape)
         for x in range(self.__clients_map.shape[0]):
             for y in range(self.__clients_map.shape[1]):
@@ -55,12 +39,7 @@ class SolutionGrader(SolutionGraderInterface):
         return nearest_clients_no
 
     def __find_nearest_pl(self, clients_cell_coords: Tuple[int, int]) -> Tuple[int, int]:
-        """
-        Funkcja znajdująca najbliższą stację dokującą dla danej komórki z klientami.
 
-        :param clients_cell_coords:  współrzędne komórki z klientami, dla których szukamy najbliższej stacji dokującej
-        :return nearest_pl: współrzędne najbliższej stacji dokującej
-        """
         cx, cy = clients_cell_coords
         
         max_dst_to_left = cx

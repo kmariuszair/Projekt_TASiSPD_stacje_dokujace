@@ -6,25 +6,12 @@ from typing import Dict
 from src.SettingMenager import setting_menager
 from src.PlotSaver import save_plot_to_file, save_anim_to_file
 from copy import copy
-"""
-    Funkcja służaca do reprezentacji graficznej macierzy klientów 
-    !!!   UWAGA   !!!
-    Aby użyć opcji generowania animacji na podstawie mapy klientów należy zainstalować moduł ffmpeg
-    Inaczej program się zawiesi 
-    TODO: ZAINSTALOWAC MODUL FFMPEG
-"""
+
 
 
 def plot_client_map(_client_map:np.array, max_clients_number_in_cell: int,
                     generate_3D_rotate_GIF: bool = False, generate_2D:bool = False):
-    """
 
-    :param client_map: Mapa rozmieszczenia klientów
-    :param max_clients_number_in_cell: Maksymalna ilość klientów jaka może byc w danej komórce
-    :param generate_3D_rotate_GIF: Parametr służący do utworzenia animowanego modelu mapy klientów
-    :param generate_2D: Parametr służący do reprezentacji mapy klientów w postaci 2D
-    :return:
-    """
     client_map = np.copy(_client_map)
     data = setting_menager.get_plot_client_map_settings()
     generate_3D_rotate_GIF = data['generate_3D_rotate_GIF']
@@ -66,9 +53,9 @@ def plot_client_map(_client_map:np.array, max_clients_number_in_cell: int,
             def animate(i):
                 ax.view_init(elev=10., azim=i)
                 return fig,
-            # Utwórz animację na podstawie mapy
+
             anim = animation.FuncAnimation(fig, animate, frames=360, interval=20, blit=True)
-            # Zapisz animację do pliku pod formatem GIF
+
             if save_to_gif:
                 save_anim_to_file(anim, 'client_map.gif')
             else:
@@ -76,10 +63,7 @@ def plot_client_map(_client_map:np.array, max_clients_number_in_cell: int,
 
 
 class DataCollectorPlotter:
-    """
-    Klasa zawierająca funkcjonalności związane ze zbieraniem informacji o przebiegu działania algorytmu
-    oraz z ich reprezentacją graficzną.
-    """
+
     def __init__(self, client_map: np.array = None,
                  load_setting_from_file: bool = False,
                  generate_dynamic_map_of_total_moves= True,
@@ -95,7 +79,7 @@ class DataCollectorPlotter:
                  show_plot_elems_in_short_tabu= True,
                  show_plot_elems_in_long_tabu = True
                 ):
-        """Inicjalizacja parametrów klasy oraz zmiennnych"""
+
         self.__generate_3D_plots = False
         self.__iteration_count = 0
         self.__x_a_list = []
@@ -109,10 +93,7 @@ class DataCollectorPlotter:
         self.__elems_in_nei_list = []
         self.__min_Q_a_pos = 0
         self.__client_map = client_map
-        """
-        Parametry dopowiedzialne za generoanie odpowiednich wykresów i animacji
-        Jeśli nie jest włączone wczytywanie konfiguracji z pliku wtedy wczytaj domyślne
-        """
+
         if load_setting_from_file:
             data = setting_menager.get_DataCollector_settings()
             self.__generate_dynamic_map_of_total_moves = data['allow_generate_dynamic_map_animation']
@@ -146,20 +127,7 @@ class DataCollectorPlotter:
                      av_cadence: float, av_long_cadence: float,
                      elems_in_short_tabu: float, elems_in_long_tabu: float
                      ):
-        """
-        Funkcja zbierająca odpowiednie dane do reprezentacji przebiegu algorytmu.
-        Są to paramentry algorytmu w danej iteracji
-        :param x_a_itr: Bieżące rozmieszczenie stacji dokujących
-        :param Q_a_itr: Funkcja kosztu w
-        :param tabu_list: Krótkoterminowa lista tabu
-        :param long_term_tabu_list: Długoterminowa lista tabu
-        :param elems_in_nei: Ilość elementów przeanalizowana w danej iteracji
-        :param av_cadence: "Średni wiek" zabronienia z listy krótkoterminowej tabu search
-        :param av_long_cadence: "Średni wiek" zabronienia z listy długoterminowej tabu search
-        :param elems_in_short_tabu: Ilość zabronień wynikająca z listy krótkoterminowej
-        :param elems_in_long_tabu: Ilość zabronień wynikająca z listy długoterminowej
-        :return:
-        """
+
         self.__x_a_list.append(np.copy(x_a_itr.T))
         self.__Q_a_list.append(Q_a_itr)
         self.__Tabu_list.append(np.copy(tabu_list).T)
@@ -174,40 +142,32 @@ class DataCollectorPlotter:
         self.__iteration_count = self.__iteration_count + 1
 
     def plot_data(self):
-        """
-        Funkcja rysująca odpowiednie wykresy.
-        Wywołuje odpowiednie metody klasy odpowiedzialne ze geneorwanie poszczególnych wykresów i analiz.
-        Każdy wykres można włązyć/wyłączyć poprzez ustawienia klasy lub plik konfiguracyjny.
-        !!! Wyłączenie reprezentacji graficznej wykresu, wyłącza zapis danego wykresu do pliku !!!
-        :return:
-        """
-        if self.__show_plot_of_Q_a:  # Wykres wartości fukncji celu w danej iteracji
+
+        if self.__show_plot_of_Q_a:
             self.__plot_Q_a()
-        if self.__show_map_of_best_plt_position:  # Mapa optymalnego rozmieszczenia stacji dokujących
+        if self.__show_map_of_best_plt_position:
             self.__plot_plt_map()
-        if self.__show_plot_of_total_taboo_list_elements:  # Wykres ilości elementów na liście tabu w danej itracji
+        if self.__show_plot_of_total_taboo_list_elements:
             self.__plot_tabu_list_elements()
-        if self.__show_plot_long_term_tabu_list_elements:  # Wykres ilości elementów na długoterminowej liście tabu
+        if self.__show_plot_long_term_tabu_list_elements:
             self.__plot_long_term_tabu_list_elements()
-        if self.__show_plot_av_cadence:     # Wykres "średni wiek" zabronienia (średnio ile iteracji wstecz było dodane zabronienie z listy krótk.)
+        if self.__show_plot_av_cadence:
             self.__plot_av_cadence()
-        if self.__show_plot_av_long_cadence: # Wykres "średni wiek" zabronienia (średnio ile iteracji wstecz było dodane zabronienie z długo. term.)
+        if self.__show_plot_av_long_cadence:
             self.__plot_av_long_cadence()
-        if self.__elems_in_short_tabu:  # Wykres ilości zabronień wynikająca z listy krótkoterminowej
+        if self.__elems_in_short_tabu:
             self.__plot_elems_in_short_tabu()
-        if self.__elems_in_long_tabu:   #Wykres ilości zabronień wynikająca z listy długoterminowej
+        if self.__elems_in_long_tabu:
             self.__plot_elems_in_long_tabu()
-        if self.__show_plot_elems_in_nei:   # Wykres ilości przeszukanych elementów w sąsiedztwie w danej iteracji
+        if self.__show_plot_elems_in_nei:
             self.__plot_elems_in_nei()
-        if self.__show_map_of_total_moves:  # Mapa wszystkich ruchów wykonanych podczas działania algorytmu
+        if self.__show_map_of_total_moves:
             self.__generate_plot_of_moves()
-        if self.__generate_dynamic_map_of_total_moves:  # Animacja przemieszczeń stacji dokujących podczas działania algorytmu
+        if self.__generate_dynamic_map_of_total_moves:
             self.__generate_dynamic_map_of_moves()
 
     def __plot_Q_a(self):
-        """
-        Funkcja reprezentująca wykres funkcji celu w danej iteracji
-        """
+
         fig = plt.figure()
         x = np.linspace(1, self.__iteration_count, self.__iteration_count, endpoint=True)
         plt.plot(x, self.__Q_a_list, 'bo')
@@ -221,9 +181,7 @@ class DataCollectorPlotter:
         plt.show()
 
     def __plot_plt_map(self):
-        """
-        Funkcja reprezentująca optymalne rozmieszczenie stacji dokujących
-        """
+
         if self.__client_map is None:
             fig = plt.figure()
             ax = fig.add_subplot(111)
@@ -253,12 +211,7 @@ class DataCollectorPlotter:
             plt.show()
 
     def __generate_dynamic_map_of_moves(self):
-        """
-        Podczas generacji dynamicznej mapy pojawia się błąd na początku filmu, jednak po przewinięciu filmu od
-        połowy dany błąd znika. Może być on wynikać bezpośrednio z działania biblioteki odpowiedzialnej za generowanie
-        filmu lub jest to błąd z funkcji renderującej.
-        Wystarczy zmienić odtwarzać na VLC i problem znika.
-        """
+
         if self.__client_map is None:
             raise ValueError('Nie można wygenerować zmian stacji dokujących bez mapy klientów!')
         x_size = self.__client_map.shape[1]
@@ -266,10 +219,7 @@ class DataCollectorPlotter:
         frame_offset = 3
         fig, ax = plt.subplots()
         x_a_copy = np.copy(self.__x_a_list)
-        """
-            Funkcja wewnętrza służąca do generowania klatki animacjia. 
-            Animuje ona ruch wykonany przez stacje dokujące w danej iteracji.
-        """
+
         def animate(frame):
             if frame >= self.__iteration_count:
                 frame = self.__iteration_count - 1
@@ -280,7 +230,7 @@ class DataCollectorPlotter:
                 for y in range(0, y_size):
                     if x_a[x][y] == 1:
                         plt.plot(x, y, 'ro')
-            # Utwórz macierz ruchu i na jej podstawie narysuj strzałki
+
             if frame > 0:
                 move = x_a_copy[frame] - x_a_copy[frame - 1]
                 pos_arrow_head = np.where(move == 1)
@@ -307,18 +257,15 @@ class DataCollectorPlotter:
             plt.colorbar(im)
             return fig,
 
-        # Utwórz animację na podstawie mapy
-        # Offset ma na celu uniknięcie pewnego buga podczas generacji
+
+
         anim = animation.FuncAnimation(fig, animate, frames=self.__iteration_count + frame_offset,
                                        interval=250, blit=True)
-        # Zapisz animację do pliku pod formatem mp4
+
         save_anim_to_file(anim, 'dynamic_plt.mp4')
 
     def __generate_plot_of_moves(self):
-        """
-        Funkcja służąca do wygenerowania mapy wszystkich ruchów jakie miały miejsce podczas działania algorytmu
-        :return:
-        """
+
         if self.__client_map is None:
             raise ValueError('Nie można wygenerować zmian stacji dokujących bez mapy klientów!')
         x_size = self.__client_map.shape[1]
@@ -327,7 +274,7 @@ class DataCollectorPlotter:
         im = plt.imshow(self.__client_map, origin='lower', interpolation='None', cmap='viridis')
         x_a_copy = self.__x_a_list
         for itr in range(1, self.__iteration_count):
-            # Utwórz macierz ruchu i na jej podstawie narysuj strzałki
+
             move = x_a_copy[itr] - x_a_copy[itr - 1]
             pos_arrow_head = np.where(move == 1)
             x_arrow_head = pos_arrow_head[0][0]
@@ -341,7 +288,7 @@ class DataCollectorPlotter:
             plt.arrow(x_arrow_begin, y_arrow_begin, dx, dy, color='white', width=0.005,
                       length_includes_head=True, head_width=0.1, head_length=0.15)
             plt.scatter(x_arrow_begin, y_arrow_begin, facecolors='none', edgecolors='white')
-        # Zaznaczenie finalnej pozycji stacji dokujących
+
         x_a = x_a_copy[self.__iteration_count - 1]
         for x in range(0, x_size):
             for y in range(0, y_size):
@@ -356,9 +303,7 @@ class DataCollectorPlotter:
         plt.show()
 
     def __plot_tabu_list_elements(self):
-        """
-        Funkcja służąca do generacji wykresu ilości elementów na liście Tabu
-        """
+
         tabu_list_elements = []
         for tabu in self.__Tabu_list:
             tabu_list_elements.append(np.count_nonzero(tabu))
@@ -374,9 +319,7 @@ class DataCollectorPlotter:
         plt.show()
 
     def __plot_long_term_tabu_list_elements(self):
-        """
-        Funkcja służąca do generacji wykresu ilości elementów na liście Tabu
-        """
+
         tabu_list_elements = []
         for tabu in self.__long_term_Tabu_list:
             tabu_list_elements.append(np.count_nonzero(tabu))
@@ -392,9 +335,7 @@ class DataCollectorPlotter:
         plt.show()
 
     def __plot_av_cadence(self):
-        """
-            Generowanie wykresu średniego wieku zabronien na liście Tabu krótkoterminowej
-        """
+
         x = np.linspace(1, self.__iteration_count, self.__iteration_count, endpoint=True)
         plt.plot(x, self.__av_cadence, 'yo')
         if self.__connect_dots_on_plot:
@@ -406,9 +347,7 @@ class DataCollectorPlotter:
         plt.show()
 
     def __plot_av_long_cadence(self):
-        """
-            Generowanie wykresu średniego wieku zabronien na liście Tabu długoterminowej
-        """
+
         x = np.linspace(1, self.__iteration_count, self.__iteration_count, endpoint=True)
         plt.plot(x, self.__av_long_cadence, 'mo')
         if self.__connect_dots_on_plot:
@@ -420,9 +359,7 @@ class DataCollectorPlotter:
         plt.show()
 
     def __plot_elems_in_short_tabu(self):
-        """
-            Generowanie wykresu ilości zabronień wynikająca z listy krótkoterminowej
-        """
+
         x = np.linspace(1, self.__iteration_count, self.__iteration_count, endpoint=True)
         plt.plot(x, self.__elems_in_short_tabu, 'co')
         if self.__connect_dots_on_plot:
@@ -434,9 +371,7 @@ class DataCollectorPlotter:
         plt.show()
 
     def __plot_elems_in_long_tabu(self):
-        """
-            Generowanie wykresu ilości zabronień wynikająca z listy długoterminowej
-        """
+
         x = np.linspace(1, self.__iteration_count, self.__iteration_count, endpoint=True)
         plt.plot(x, self.__elems_in_long_tabu, 'co')
         if self.__connect_dots_on_plot:
@@ -448,9 +383,7 @@ class DataCollectorPlotter:
         plt.show()
 
     def __plot_elems_in_nei(self):
-        """"
-            Wykres ilości przeszukanych elementów w sąsiedztwie w danej iteracji
-        """
+
         x = np.linspace(1, self.__iteration_count, self.__iteration_count, endpoint=True)
         plt.plot(x, self.__elems_in_nei_list, 'go')
         if self.__connect_dots_on_plot:
@@ -463,20 +396,18 @@ class DataCollectorPlotter:
 
 
 def generate_plot_of_telemetry(telemetry_data: Dict):
-    """
-        Funkcja służy do utworzenia wykresu przedstawiającego dane zebrane przez telemetrię
-    """
+
     fig, ax = plt.subplots(figsize=(16, 9))
-    # Sortowanie według łacznego czasu wykonania
+
     telemetry_data = dict(sorted(telemetry_data.items(), key=lambda x: x[1], reverse=True))
     name_of_function = telemetry_data.keys()
     total_time = telemetry_data.values()
-    # Generowanie wykresu
+
     y_pos = np.arange(len(name_of_function))
     ax.barh(y_pos, total_time, align='center')
     ax.set_yticks(y_pos)
     ax.set_yticklabels(name_of_function)
-    ax.invert_yaxis()  # labels read top-to-bottom
+    ax.invert_yaxis()
     ax.set_xlabel('Łączny czas wykonania w sekundach')
     ax.set_title('Czas wykonania poszczególnych funkcji algorytmu')
     save_plot_to_file(plt, 'telemetria')
@@ -484,10 +415,7 @@ def generate_plot_of_telemetry(telemetry_data: Dict):
 
 
 def plot_map_barriers(_barrier_map:np.array):
-    """
-        Funkcja do wyswietalnia mapy barier ograniczajacej ruch robotow.
-        Bariery rozumiemiemy jako pola bez mozliwosci ruchu robotów.
-    """
+
     fig = plt.figure(figsize=(16, 12))
     ax = fig.add_subplot(111)
     im = ax.imshow(_barrier_map, origin='lower', interpolation='None', cmap='Purples')
@@ -503,28 +431,24 @@ def plot_map_barriers(_barrier_map:np.array):
 
 
 def _plot_robots_movements(_robot_mov_list: np.array, _barrier_map: np.array, doc_station_map: np.array = None, plot_name:str = 'przemieszczenie_robotow'):
-    """
-    Funkcja służąca do wygenerowania mapy wszystkich ruchów jakie miały miejsce podczas przeprowadzania symulacji
-    Istnieje opcjoinalny parametr do naniesienia pozycji stacji dokujących
-    :return:
-    """
+
     barrier_map = copy(_barrier_map)
 
     x_size = _barrier_map.shape[1]
     y_size = _barrier_map.shape[0]
     fig, ax = plt.subplots()
-    # Wyswietlanie mapy barrier
+
     im = plt.imshow(_barrier_map, origin='lower', interpolation='None', cmap='plasma')
 
     (__iteration_count, robot_count, _) = _robot_mov_list.shape
-    # Petla iterujaca po poszczegolnych etapach symulacji
+
     for itr in range(1, __iteration_count):
-        # petla po poszczegolnych robotach
+
         for robot_id in range(robot_count):
             pos_arrow_head = _robot_mov_list[itr, robot_id, :]
             x_arrow_head = pos_arrow_head[1]
             y_arrow_head = pos_arrow_head[0]
-            # Znajdz poorzednia pozycje danego robota
+
             pos_arrow_begin = _robot_mov_list[itr-1, robot_id, :]
             x_arrow_begin = pos_arrow_begin[1]
             y_arrow_begin = pos_arrow_begin[0]
@@ -535,7 +459,7 @@ def _plot_robots_movements(_robot_mov_list: np.array, _barrier_map: np.array, do
                       length_includes_head=True, head_width=0.1, head_length=0.15)
             plt.scatter(x_arrow_begin, y_arrow_begin, facecolors='none', edgecolors='white')
 
-    # Zaznaczenie finalnej pozycji stacji dokujących
+
     if doc_station_map is not None:
         for x in range(0, x_size):
             for y in range(0, y_size):
@@ -552,17 +476,15 @@ def _plot_robots_movements(_robot_mov_list: np.array, _barrier_map: np.array, do
 
 
 def plot_robots_movements(_robot_mov_list: np.array, _barrier_map: np.array):
-    # Wywołaj dedykowaną do funkcje
+
     _plot_robots_movements(_robot_mov_list, _barrier_map)
 
 
 def plot_robots_movements_with_doc_station(_robot_mov_list: np.array, _barrier_map: np.array, doc_station_map: np.array):
-    # Wywołaj dedykowaną do funkcje
+
     _plot_robots_movements(_robot_mov_list, _barrier_map, doc_station_map, 'Przemiszczenie_robotow_ze_stacjami_dokujacymi')
 
-"""
-    Animowane przemiszczanie sie robotów z opcja wyswietalnia pozycji stacji dokujących
-"""
+
 class RobotAnimationPlot:
     def __init__(self):
         self.robot_anim_itr = 0
@@ -580,10 +502,7 @@ class RobotAnimationPlot:
         y_size = _barrier_map.shape[0]
         frame_offset = 3
         fig, ax = plt.subplots()
-        """
-            Funkcja wewnętrza służąca do generowania klatki animacjia. 
-            Animuje ona ruch wykonany przez stacje dokujące w danej iteracji.
-        """
+
         (__iteration_count, robot_count, _) = self.robot_moves.shape
         self.robot_anim_itr = __iteration_count
         def animate_2(frame):
@@ -592,26 +511,26 @@ class RobotAnimationPlot:
             plt.clf()
             im = plt.imshow(self.barrier_map, origin='lower', interpolation='None', cmap='plasma')
 
-            # Zaznaczenie finalnej pozycji stacji dokujących
+
             if self.doc_station_map is not None:
                 for x in range(0, x_size):
                     for y in range(0, y_size):
                         if self.doc_station_map[x][y] != 0:
                             plt.plot(y, x, 'ro')
 
-            # Utwórz macierz ruchu i na jej podstawie narysuj strzałki
+
             if frame > 0:
                 curr_mov = self.robot_moves[frame, :, :]
                 if self.robot_anim_itr == 0:
                     prev_mov = curr_mov
                 else:
                     prev_mov = self.robot_moves[frame - 1, :, :]
-                # petla po poszczegolnych robotach
+
                 for robot_id in range(robot_count):
                     pos_arrow_head = curr_mov[robot_id, :]
                     x_arrow_head = pos_arrow_head[1]
                     y_arrow_head = pos_arrow_head[0]
-                    # Znajdz poorzednia pozycje danego robota
+
                     pos_arrow_begin = prev_mov[robot_id, :]
                     x_arrow_begin = pos_arrow_begin[1]
                     y_arrow_begin = pos_arrow_begin[0]
@@ -630,11 +549,11 @@ class RobotAnimationPlot:
             plt.colorbar(im)
             return fig,
 
-        # Utwórz animację na podstawie mapy
-        # Offset ma na celu uniknięcie pewnego buga podczas generacji
+
+
         anim = animation.FuncAnimation(fig, animate_2, frames=self.robot_anim_itr + frame_offset,
                                        interval=250, blit=True)
-        # Zapisz animację do pliku pod formatem mp4
+
         save_anim_to_file(anim, self.file_name)
 
     def robot_animation(self, _robot_mov_arr: np.array, _barrier_map: np.array):
@@ -643,7 +562,5 @@ class RobotAnimationPlot:
     def robot_animation_with_doc_station(self, _robot_mov_arr: np.array, _barrier_map: np.array, _doc_station_map: np.array):
         self._anim_robot_mov(_robot_mov_arr, _barrier_map, _doc_station_map, 'ruch_robotow_ze_stacjami_dokujacymi.mp4')
 
-"""
-    Globalny byt klasy służacy do prostej animacji przemieszczania się robotów
-"""
+
 robot_anim_2 = RobotAnimationPlot()
