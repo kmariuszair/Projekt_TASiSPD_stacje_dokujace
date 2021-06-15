@@ -43,11 +43,6 @@ class RandomProblemGen(ProblemGenInterface):
                 cell_with_clients = problem_matrix > 0
                 cell_with_clients_no = np.count_nonzero(cell_with_clients)
 
-
-
-
-
-
                 index_to_sub_1 = np.random.randint(0, cell_with_clients_no - 1)
 
                 to_sub1 = np.zeros(cell_with_clients_no, dtype='int32')
@@ -60,11 +55,6 @@ class RandomProblemGen(ProblemGenInterface):
 
                 cell_with_less_clients = problem_matrix < self.__max_clients_number_in_cell
                 cell_with_less_clients_no = np.count_nonzero(cell_with_less_clients)
-
-
-
-
-
 
                 index_to_sub_1 = np.random.randint(0, cell_with_less_clients_no - 1)
 

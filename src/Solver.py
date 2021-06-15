@@ -12,8 +12,6 @@ import src.DataCollectorPlotter as DataCollectorPlotter
 import src.Helpers as Helpers
 
 
-
-
 class Telemetry:
 
     telemetry_data = {}

@@ -43,9 +43,6 @@ def generate_docking_stations_map(allowed_positions: np.array, docks_no: int, fr
         for _ in range(docks_no):
             written = False
 
-
-
-
             while not written:
                 tst = np.random.randint(0, 4)
                 if tst == 0:

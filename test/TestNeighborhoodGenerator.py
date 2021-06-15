@@ -13,13 +13,6 @@ class TestNeighborhoodGenerator(unittest.TestCase):
                                          [0, 0, 0, 0]])
 
 
-
-
-
-
-
-
-
         n1 = np.array([[1, 0, 0, 0],
                        [0, 0, 1, 0],
                        [0, 0, 0, 0]])
