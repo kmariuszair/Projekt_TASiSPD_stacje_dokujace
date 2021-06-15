@@ -116,7 +116,7 @@ def run_algorithm(path_to_settings=None):
             rootLogger.info("Rysuję szkic ruchów robotów")
             DataCollectorPlotter.plot_robots_movements(robot_pos_sim, barriers_map)
             rootLogger.info("Tworzę animację ruchu robotów")
-            DataCollectorPlotter.dinozaur_pimpus.robot_animation(robot_pos_sim, barriers_map)
+            DataCollectorPlotter.robot_anim_2.robot_animation(robot_pos_sim, barriers_map)
 
             rootLogger.info("Rysuję wykres obciążenia mapy ruchem robotów")
             DataCollectorPlotter.plot_client_map(traffic_map.astype('int32'), int(np.max(traffic_map) + 1))
@@ -146,7 +146,7 @@ def run_algorithm(path_to_settings=None):
             # Wyznacz mape przemieszczen symulacyjnych robotow z optymalna pozycja stacji dokujacych
             DataCollectorPlotter.plot_robots_movements_with_doc_station(robot_pos_sim, barriers_map, solution)
             rootLogger.info("Tworzę animację optymalizacji pozycji stacji dokujących")
-            DataCollectorPlotter.dinozaur_pimpus.robot_animation_with_doc_station(robot_pos_sim, barriers_map, solution)
+            DataCollectorPlotter.robot_anim_2.robot_animation_with_doc_station(robot_pos_sim, barriers_map, solution)
 
             # Pokaż i zapis do pliku wykresy uzyskanego rozwiązania
             solution_util.plot_solution_utilization()

@@ -646,4 +646,4 @@ class RobotAnimationPlot:
 """
     Globalny byt klasy służacy do prostej animacji przemieszczania się robotów
 """
-dinozaur_pimpus = RobotAnimationPlot()
+robot_anim_2 = RobotAnimationPlot()
