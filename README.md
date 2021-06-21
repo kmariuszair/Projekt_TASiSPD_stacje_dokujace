@@ -12,7 +12,7 @@ Projekt z TASiSPD
 7) uruchomienie skryptu z podaną ścieżką do interpretera conda (>> C:\Users\USERNAME\anaconda3\python.exe "sciezka/do/skryptu/main.py")
 
 ## Obajśnienia plików konfiguracyjnych
-# - details\caseX\robots.dat
+### - details\caseX\robots.dat
 Pliki binarne zapisane za pomocją modułu *pickle*. Zawierają słowniki mapujące (string) ID robota na słownik zawierający informacje o nim. 
 Pola w słowniku opisującym robota:
 'starting_position'     : pozycja startowa w symulacji
@@ -29,7 +29,7 @@ Pola w słowniku opisującym robota:
 'price'                 : cena
 'link'                  : link do strony z robotem
 
-# - details\caseX\docks.dat
+### - details\caseX\docks.dat
 Analogiczne pliki binarne jak w poprzednim przypadku. Tym razem słowniki zawierają informacje o stacjach dokujących
 'position'              : pozycja stacji dokującej przed optymalizacją
 'loading_speed'         : prędkość ładowania
@@ -37,21 +37,22 @@ Analogiczne pliki binarne jak w poprzednim przypadku. Tym razem słowniki zawier
 'name'                  : nazwa
 'link'                  : link do strony ze stacją dokującą
 
-# -maps\caseX\barriers.npy
+### -maps\caseX\barriers.npy
 Plik zapisany za pomocą funkcji *numpy.save*. Zawiera informacje o barierach na mapie. Wartość 1 oznacza brak możliwości poruszania się robota po danej komórce 
 oraz brak możliwości ustawienia w danym miejscu stacji dokującej. Wartość 2 oznacza, że w danym miejscu może poruszać się robot, 
 ale nie można postawić stacji dokującej. Wartość 0 oznacza swobodę za równo w poruszaniu się robotem jak i ustawiania stacji dokującej.
 
-# -logs\caseX\subcase1a\caseX_D_docks.log
+### -logs\caseX\subcase1a\caseX_D_docks.log
 Plik tekstowy z logami przebiegu symulacji oraz optymalizacji dla danej liczby D stacji dokujących. Kolejne wartości D oznaczają zwiększanie liczby stacji dokujących 
 na mapie. Jest to element badania wpływu ich ilości na potencjalny zysk.
 
-# -plots\caseX\subcase1a\docks_no_D
+### -plots\caseX\subcase1a\docks_no_D
 Pliki graficzne oraz animacje uzyskane w trakcie symulacji pracy robotów oraz optymalizacji. Animacja z ruchem robotów oraz stacjami dokującymi jest rysowana dla
 ruchu robotów przed optymalizacją pozycji stacji, a położenie stacji już po tej optymalizacji. D oznacza liczbę stacji dokujących na mapie dla danego przypadku.
 
-# -settings\test_cases
+### -settings\test_cases
 Pliki JSON z kolejnymi scenariuszami testowymi
+`
 {
     "main": [
         {
@@ -111,4 +112,4 @@ Pliki JSON z kolejnymi scenariuszami testowymi
             "max_maintenance_cost": maksymalny koszt utrzymania instalacji
         }
     ]
-}
+}`
