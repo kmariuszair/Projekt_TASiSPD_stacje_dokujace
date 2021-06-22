@@ -1,8 +1,9 @@
 # Projekt_TASiSPD_stacje_dokujace
 Projekt z TASiSPD
 
-## Intrukcja uruchomienia (na platformie Windows 64-bit):
+## Intrukcja uruchomienia:
 
+### — na platformie Windows 64-bit
 1) instalacja środowiska Anaconda (https://www.anaconda.com/products/individual#Downloads)
 2) dodanie ścieżek do zmiennej środowiskowej, systemowej PATH - "C:\Users\USERNAME\anaconda3" oraz "C:\Users\USERNAME\anaconda3\Scripts"
 3) aktywacja shella - "conda init cmd.exe"
@@ -10,6 +11,11 @@ Projekt z TASiSPD
 5) aktywacja środowiska base (>> conda activate base)
 6) doinstalowanie ffmpeg (>> conda install ffmpeg)
 7) uruchomienie skryptu z podaną ścieżką do interpretera conda (>> C:\Users\USERNAME\anaconda3\python.exe "sciezka/do/skryptu/main.py")
+
+### — na platformie Google Colab
+1) kopiujemy folder *project_colab* do folderu *Colab Notebooks* znajdującego się w głównym folderze naszego dysku.
+2) podłączamy nasz dysk Google do notebooka *main.ipynb*
+3) uruchamiamy notebooka - platforma Google Colab jest już odpowiednio skonfigurowana.
 
 ## Obajśnienia plików konfiguracyjnych
 ### — details\caseX\robots.dat
@@ -90,7 +96,7 @@ Pliki JSON z kolejnymi scenariuszami testowymi
             "log_path":                   "ścieżka do zapisywania logów",
             "iteration_lim":              "maksymalna ilość iteracji algorytmu optymalizującego",
             "starting_solution":          "początkowe ułożenie stacji dokujących",
-            "dynamic_neighborhood":       "parametr Tabu-Search - dynamiczne sąsiedztwo",
+            "dynamic_neighborhood":       "parametr Tabu-Search - dynamiczne sąsiedztwo"
         }
     ],
     "DataCollectorPlotter": [
@@ -134,3 +140,61 @@ Pliki JSON z kolejnymi scenariuszami testowymi
     ]
 }
 ```
+
+## Obajśnienia plików źródłowych
+
+### — ConditionTester.py
+
+Plik z klasami implementującymi logikę zabronień w wykorzystanym algorytmie Tabu-Search.
+
+### — DataCollectorPlotter.py
+
+Skrypt implementujący logikę pozwalającą na zbieranie danych oraz ich późniejszą prezentację graficzną.
+
+### — FileMenager.py
+
+Pozwala na zarządzanie otwieranymi plikami.
+
+### — Helpers.py
+
+Funkcje pomocnicze: generowanie macierzy diamentowych do Tabu-Search, generowanie początkowych ułożeń stacji dokujących,
+przetwarzanie danych zawartych w plikach na odpowiadający nam format.
+
+### — MapGenerator.py
+
+Generacja mapy obciążenia na podstawie symulacji pracy robotów w szklarnii. Zawiera dodatkowe klasy związane z robotami, 
+takie jak rój robotów (RobotSwarm) oraz funkcje generujące losowe ustawienia i roje robotów (pomocne w pierwszej części
+implementacji).
+
+### — NeighborhoodGenerator.py
+
+Generacja sąsiedztwa dla algorytmu Tabu-Search.
+
+### — PlotSaver.py
+
+Zarządzanie zapisywaniem animacji oraz grafik.
+
+### — ProblemGenerator.py
+
+Generator problemów optymalizacyjnych. Pomocny w pierwszej fazie implementacji algorytmu Tabu-Search.
+
+### — RobotModel.py
+
+Model robota w postaci klasy języka Python. Zawiera dodatkowe klasy odpowiadające za implementację składowych klasy 
+nadrzędnej robota - definicję klasy ustawień robota oraz stanu robota.
+
+### — SettingMenager.py
+
+Skrypt zarządzający ustawieniami programu.
+
+### — SolutionGrader.py
+
+Skrypt oceniający uzyskane rozwiązanie.
+
+### — Solver.py
+
+Główny skrypt solwera algorytmu Tabu-Search.
+
+### — StartingSolutionGenerator.py
+
+Generacja rozwiązania początkowego (początkowego ustawienia stacji dokujących), jeśli nie podano własnego.
